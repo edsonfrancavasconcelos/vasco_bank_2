@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador de Seguros e Financiamentos | Vasco Bank</title>
+ 
+  <style>
+      :root {
+  --color1: #ff6200; /* Laranja neon principal */
+  --color2: #0d0d0d; /* Preto profundo */
+  --color3: #ff8c38; /* Laranja claro */
+  --color4: #ffb300; /* Amarelo neon */
+  --color5: #ffd700; /* Amarelo claro */}
+    
+    body {
+      background-color: #0d0d0d;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    h1, h2 {
+      color: var(--color1);
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 0 12px var(--color1);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+    }
+
+    .card img {
+      width: 50px;
+      margin-bottom: 15px;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      color: var(--color3);
+    }
+
+    .form-section {
+      background: #111;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 12px var(--color1);
+      margin-bottom: 40px;
+    }
+
+    form label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    form input, form select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 8px;
+      background-color: #222;
+      color: #fff;
+    }
+
+    button {
+      background-color: var(--color1);
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      margin-top: 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #ff7b22;
+    }
+
+    .resultado {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: var(--color3);
+    }
+
+     .back-btn {
+      background-color:var(--color3);
+      color: var(--color2);
+      border-radius: 5px;
+      width: 25%;
+      padding: 10px;
+    }
+
+    .back-btn:hover {
+      background-color: var(--color1);
+      color:var(--color5);
+    }
+
+    .back-btn a {
+      color: var(--color2);
+      text-decoration: none;
+      font-size: 1.1rem;
+    }
+      .back-btn a:hover{
+          color: #fff;
+      }
+    @media (max-width: 600px) {
+      h1, h2 {
+        font-size: 1.4rem;
+      }
+       .back-btn {
+      background-color:var(--color3);
+      color: var(--color2);
+      border-radius: 5px;
+      font-size: 2px;
+      width: 100%;
+      padding: 10px;
+    }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Simulador de Seguros e Financiamentos</h1>
+
+    <div class="cards">
+      <div class="card">
+        <img src="img/emprestimos.jpg" alt="Financiamento Imobiliário">
+        <h3>Financiamento Imobiliário</h3>
+        <p>Conquiste seu imóvel com as melhores taxas do mercado.</p>
+      </div>
+      <div class="card">
+        <img src="img/vascobank-auto.jpg" alt="Financiamento de Veículo">
+        <h3>Financiamento de Automóveis</h3>
+        <p>Compre seu carro novo ou usado com prazos flexíveis.</p>
+      </div>
+      <div class="card">
+        <img src="img/seguros.jpg" alt="Seguro Residencial">
+        <h3>Seguro Residencial</h3>
+        <p>Proteja sua casa contra imprevistos com cobertura completa.</p>
+      </div>
+      <div class="card">
+        <img src="img/vascobank-auto.jpg" alt="Seguro Auto">
+        <h3>Seguro Auto</h3>
+        <p>Segurança para seu carro com assistência 24h.</p>
+      </div>
+      <div class="card">
+        <img src="img/emprestimos.jpg" alt="Seguro Auto">
+        <h3>Emprestimo</h3>
+        <p>As menores taxas do Mercado para você.</p>
+      </div>
+    </div>
+
+    <!-- Simulador -->
+    <div class="form-section">
+      <h2>Simule Agora</h2>
+      <form id="simulador-form">
+        <label for="tipo">Tipo de Simulação:</label>
+        <select id="tipo" required>
+          <option value="">Selecione</option>
+          <option value="imovel">Financiamento Imobiliário</option>
+          <option value="veiculo">Financiamento de Veículo</option>
+          <option value="seguro-casa">Seguro Residencial</option>
+          <option value="seguro-auto">Seguro Auto</option>
+          <option value="emprestimo">Emprestimo</option>
+        </select>
+
+        <label for="valor">Valor Desejado (R$):</label>
+        <input type="number" id="valor" placeholder="Ex: 100000" required>
+
+        <label for="prazo">Prazo (em meses):</label>
+        <input type="number" id="prazo" placeholder="Ex: 60" required>
+
+        <button type="submit">Simular</button>
+        <div class="resultado" id="resultado"></div>
+      </form>
+    </div>
+
+    <div class="back-btn">
+      <a href="dashboard.html">← Voltar ao Dashboard</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('simulador-form');
+    const resultadoDiv = document.getElementById('resultado');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const tipo = document.getElementById('tipo').value;
+      const valor = parseFloat(document.getElementById('valor').value);
+      const prazo = parseInt(document.getElementById('prazo').value);
+
+      if (!tipo || isNaN(valor) || isNaN(prazo)) {
+        resultadoDiv.textContent = 'Preencha todos os campos corretamente.';
+        return;
+      }
+
+      let taxa;
+      switch (tipo) {
+        case 'imovel': taxa = 0.008; break; // 0.8% ao mês
+        case 'veiculo': taxa = 0.012; break; // 1.2% ao mês
+        case 'seguro-casa': taxa = 0.002; break; // 0.2%
+        case 'seguro-auto': taxa = 0.004; break; // 0.4%
+        case 'emprestimo': taxa = 0.004; break; // 0.4%
+        default: taxa = 0;
+      }
+
+      const parcela = tipo.includes('seguro')
+        ? valor * taxa
+        : (valor * taxa) / (1 - Math.pow(1 + taxa, -prazo));
+
+      resultadoDiv.textContent = `Valor da ${tipo.includes('seguro') ? 'mensalidade' : 'parcela'}: R$ ${parcela.toFixed(2)}`;
+    });
+  </script>
+</body>
+</html>

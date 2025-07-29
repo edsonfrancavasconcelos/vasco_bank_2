@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Extrato - VascoBank</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+  <!-- Preload -->
+<div id="preload">
+  <div class="loader"></div>
+</div>
+
+  <header>
+    <img src="img/vb_bank.png" alt="VascoBank Logo" class="logo">
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="dashboard.html">Transações</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+  <main class="container mt-4">
+    <h2>Extrato Bancário</h2>
+    <div id="statement-details">
+      <table class="table table-dark">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Valor (R$)</th>
+          </tr>
+        </thead>
+        <tbody id="statement-body"></tbody>
+      </table>
+    </div>
+    <a href="index.html" class="btn btn-secondary">Voltar</a>
+  </main>
+  <footer>
+    <p class="text-center">© 2025 VascoBank. Todos os direitos reservados.</p>
+    <div class="social-icons text-center">
+      <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+      <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+    </div>
+  </footer>
+  <script src="/js/preload.js"></script>
+  <script src="js/statement.js"></script>
+</body>
+</html>

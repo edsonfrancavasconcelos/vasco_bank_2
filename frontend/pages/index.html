@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VascoBank - Produtos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/theme.css" />
+  <style>
+    :root {
+      --color4: #ffb300;
+      --gray-dark: #2a2a2a;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      --transition: all 0.3s ease;
+      --primary: #ff6200;
+      --primary-light: #ff8c38;
+      --text-dark: #b0b0b0;
+    }
+    body {
+      background-color: #0d0d0d;
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+    }
+    header {
+      background-color: #0d0d0d;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+    header .logo {
+      height: 40px;
+      filter: drop-shadow(0 0 2px var(--primary));
+    }
+    nav a {
+      color: white;
+      margin-left: 2rem;
+      text-decoration: none;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    nav a:hover,
+    nav a:focus {
+      color: var(--primary-light);
+      outline: none;
+    }
+    main.container {
+      max-width: 960px;
+      margin: 2rem auto 4rem;
+      padding: 0 1rem;
+    }
+    h2.text-center {
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+      color: var(--color4);
+    }
+    .carousel-container {
+      overflow-x: hidden;
+      display: flex;
+      gap: 1rem;
+      scroll-snap-type: x mandatory;
+      padding: 2rem 1rem;
+      scroll-behavior: smooth;
+      position: relative;
+    }
+    .carousel-card {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+      width: 280px;
+      background-color: var(--gray-dark);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+    .carousel-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 20px var(--primary);
+    }
+    .carousel-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .card-body {
+      padding: 1rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .carousel-card h5 {
+      color: var(--color4);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .carousel-card p {
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      margin-bottom: 1rem;
+    }
+    .carousel-card a {
+      display: inline-block;
+      background-color: var(--primary);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      text-align: center;
+      transition: var(--transition);
+      font-weight: 600;
+    }
+    .carousel-card a:hover,
+    .carousel-card a:focus {
+      background-color: var(--primary-light);
+      outline: none;
+    }
+    .carousel-buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    .carousel-buttons button {
+      background-color: var(--primary);
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      margin: 0 0.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .carousel-buttons button:hover {
+      background-color: var(--primary-light);
+    }
+    footer {
+      background-color: #0d0d0d;
+      padding: 2rem 1rem;
+      text-align: center;
+      color: white;
+    }
+    footer .logo-footer {
+      height: 40px;
+      margin-bottom: 1rem;
+      filter: drop-shadow(0 0 3px var(--primary));
+      object-fit: contain;
+    }
+    footer p {
+      margin: 0.5rem 0 1rem;
+      font-size: 0.85rem;
+    }
+    .social-icons a {
+      color: var(--color4);
+      margin: 0 0.75rem;
+      font-size: 1.2rem;
+      transition: var(--transition);
+    }
+    .social-icons a:hover,
+    .social-icons a:focus {
+      color: var(--primary-light);
+      outline: none;
+    }
+    
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">
+      <img src="img/vb_bank.png" alt="Logo" class="logo" />
+    </a>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="login.html">Login</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="products-services.html">Serviços</a>
+      <a href="recover-access.html">acesso</a>      
+    </nav>
+    
+  </header>
+  <main class="container">
+    <!-- Adicione esse bloco logo acima do h2 "Conheça os Produtos" -->
+<div class="d-flex justify-content-end align-items-center mb-3" style="gap: 1rem;">
+  <a href="login.html" class="btn btn-outline-light d-flex align-items-center" style="gap: 0.5rem;">
+    <i class="fas fa-sign-in-alt"></i> Login
+  </a>
+  <a href="create-account.html" class="btn btn-outline-warning d-flex align-items-center" style="gap: 0.5rem;">
+    <i class="fas fa-user-plus"></i> Criar Conta
+  </a>
+</div>
+
+    <h2 class="text-center">VascoBank pra você</h2>
+    <div class="carousel-container" id="carousel">
+      <!-- Cards -->
+      <div class="carousel-card"><img src="img/indique-amigo.jpeg" alt="Cartão" /><div class="card-body"><h5>Cartão de Crédito</h5><p>Cashback e controle digital.</p><a href="about-card.html">Saiba mais</a></div></div>
+      <div class="carousel-card"><img src="img/emprestimos.jpg" alt="Empréstimos" /><div class="card-body"><h5>Empréstimos</h5><p>Simule com taxas justas.</p><a href="simulador.html">Simular</a></div></div>
+      <div class="carousel-card"><img src="img/seguros.jpg" alt="Seguros" /><div class="card-body"><h5>Seguros</h5><p>Proteção completa.</p><a href="#">Ver Opções</a></div></div>
+      <div class="carousel-card"><img src="img/whatasapp.jpeg" alt="Zap" /><div class="card-body"><h5>Você no Zap</h5><p>Fale direto com a gente.</p><a href="#">Abrir Conta</a></div></div>
+      <div class="carousel-card"><img src="img/recarga.jpg" alt="Recarga" /><div class="card-body"><h5>Recarga</h5><p>Sem burocracias.</p><a href="#">Começar</a></div></div>
+    </div>
+    <div class="carousel-buttons">
+      <button onclick="scrollCarousel(-1)"><i class="fas fa-chevron-left"></i></button>
+      <button onclick="scrollCarousel(1)"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </main>
+  <footer>
+    <img src="img/vb_bank.png" alt="Logo" class="logo-footer" />
+    <p>© 2025 VascoBank. Todos os direitos reservados.</p>
+    <div class="social-icons">
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-x-twitter"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-linkedin-in"></i></a>
+    </div>
+  </footer>
+  <script>
+    function scrollCarousel(direction) {
+      const carousel = document.getElementById('carousel');
+      const cardWidth = carousel.querySelector('.carousel-card').offsetWidth + 16; // inclui gap
+      carousel.scrollLeft += direction * cardWidth;
+    }
+  </script>
+  <script src="js/create-account.js"></script>
+</body>
+</html>
