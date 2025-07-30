@@ -3,424 +3,66 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Dashboard do VascoBank - Gerencie suas finanças com segurança e praticidade" />
-  <title>VascoBank - Dashboard</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link href="/css/theme.css" rel="stylesheet" />
+  <title>Dashboard - VascoBank</title>
+  <link rel="stylesheet" href="./css/theme.css" />
 </head>
 <body>
-  <!-- Preload -->
-  <div id="preload" class="preload hidden">
-    <div class="loader" role="status">
-      <span class="visually-hidden">Carregando...</span>
-    </div>
-  </div>
-
   <header>
-    <div class="container">
-      <a href="/index.html" aria-label="Página inicial do VascoBank">
-        <img src="/img/vb_bank.png" alt="VascoBank Logo" class="logo" />
-      </a>
-      <nav>
-        <a href="/index.html" class="nav-link">Início</a>
-        <a href="/login.html" class="nav-link">Login</a>
-        <a href="#" id="logoutBtn" class="nav-link">Sair</a>
-      </nav>
-    </div>
+    <h1>VascoBank</h1>
+    <nav>
+      <a href="../index.html">Início</a>
+      <a href="../produtos.html">Produtos</a>
+      <a href="../servicos.html">Serviços</a>
+      <a href="./dashboard.html">Dashboard</a>
+      <a href="../login.html">Login</a>
+      <a href="../logout">Logout</a>
+    </nav>
   </header>
 
   <main class="container">
-    <h2>Dashboard</h2>
-
-    <div class="user-info card">
-      <h3 id="userName">Bem-vindo!</h3>
-      <p><strong>Conta:</strong> <span id="accountNumber">---</span></p>
-      <p>
-        <strong>Saldo:</strong> <span id="balance">R$ ---</span>
-        <i id="toggleBalance" class="fas fa-eye" aria-label="Exibir saldo"></i>
-      </p>
-    </div>
-
-    <!-- Área de Cartões -->
-    <section>
-      <h3>Cartões</h3>
-      <div class="icon-grid">
-        <a href="/create-card.html" class="icon-item" id="create-card" aria-label="Criar cartão">
-          <div class="icon-circle">
-            <i class="fas fa-id-card"></i>
-          </div>
-          <span>Criar Cartão</span>
-        </a>
-        <div class="icon-item cards-icon-item" id="cardsArea" aria-label="Acessar área de cartões" role="button" tabindex="0">
-          <div class="icon-circle">
-            <i class="fas fa-credit-card"></i>
-          </div>
-          <span>Área de Cartões</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <p><strong>Cartão de Crédito - Fatura Atual:</strong> <span id="creditCardInvoice">R$ ---</span></p>
-        <p><strong>Cartões Físicos:</strong></p>
-        <div id="cardsList"></div>
-        <p><strong>Cartões Virtuais:</strong></p>
-        <div id="cardsContainer"></div>
-      </div>
+    <section id="user-info">
+      <!-- Nome, saldo, histórico do usuário carregados pelo user.js -->
     </section>
 
-    <!-- Área de Investimentos -->
-    <section>
-      <h3>Investimentos</h3>
-      <div class="icon-grid">
-        <div class="icon-item investments-icon-item" id="investmentsArea" aria-label="Acessar área de investimentos" role="button" tabindex="0">
-          <div class="icon-circle">
-            <i class="fas fa-chart-line"></i>
-          </div>
-          <span>Área de Investimentos</span>
-        </div>
+    <section id="services-cards" class="flex">
+      <div class="card" data-action="pix">
+        <h3>Área Pix</h3>
+        <p>Envie, receba e gerencie suas chaves Pix com praticidade.</p>
+        <button data-action="open-pix">Acessar Pix</button>
       </div>
-      <div class="card">
-        <p><strong>Saldo em Investimentos:</strong> <span id="investmentBalance">R$ ---</span></p>
-      </div>
-    </section>
 
-    <!-- Área de Financiamentos -->
-    <section>
-      <h3>Financiamentos</h3>
-      <div class="icon-grid">
-        <div class="icon-item financing-icon-item" id="financingArea" aria-label="Acessar área de financiamentos" role="button" tabindex="0">
-          <div class="icon-circle">
-            <i class="fas fa-home"></i>
-          </div>
-          <span>Área de Financiamentos</span>
-        </div>
+      <div class="card" data-action="cards">
+        <h3>Cartões</h3>
+        <p>Visualize, crie e gerencie seus cartões físicos e virtuais.</p>
+        <button data-action="open-cards">Ver Cartões</button>
       </div>
-      <div class="card">
-        <p><strong>Empréstimos:</strong> <span id="loans">---</span></p>
-        <p><strong>Consignados:</strong> <span id="consignedLoans">---</span></p>
+
+      <div class="card" data-action="finances">
+        <h3>Financiamentos</h3>
+        <p>Simule e acompanhe seus financiamentos em tempo real.</p>
+        <button data-action="open-finances">Ver Financiamentos</button>
       </div>
-    </section>
 
-    <!-- Área de Transações -->
-    <section>
-      <h3>Transações</h3>
-      <div class="icon-grid">
-        <div class="icon-item transactions-icon-item" id="transactionsArea" aria-label="Acessar área de transações" role="button" tabindex="0">
-          <div class="icon-circle">
-            <i class="fas fa-exchange-alt"></i>
-          </div>
-          <span>Área de Transações</span>
-        </div>
-        <div class="icon-item pix-area-icon" id="pixArea" aria-label="Acessar área Pix" role="button" tabindex="0">
-          <div class="icon-circle">
-            <i class="fas fa-qrcode"></i>
-          </div>
-          <span>Área Pix</span>
-        </div>
+      <div class="card" data-action="investments">
+        <h3>Investimentos</h3>
+        <p>Acompanhe e invista com inteligência e segurança.</p>
+        <button data-action="open-investments">Ver Investimentos</button>
       </div>
-    </section>
 
-    <!-- Histórico de Transações -->
-    <section>
-      <h3>Histórico de Transações</h3>
-      <div id="transactionHistory"></div>
-    </section>
-
-    <!-- Cotações -->
-    <section>
-      <h3>Cotações</h3>
-      <div class="card">
-        <div id="quotesResult" class="quotes-result">
-          <p>Carregando cotações...</p>
-          <div class="icon-item" id="showQuotes" aria-label="Ver cotações em tempo real" role="button" tabindex="0">
-            <div class="icon-circle">
-              <i class="fas fa-dollar-sign"></i>
-            </div>
-            <span>Cotações</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Outras Ações -->
-    <section>
-      <h3>Outras Ações</h3>
-      <div class="icon-grid">
-        <a href="/create-account.html" class="icon-item" id="create-account" aria-label="Criar nova conta">
-          <div class="icon-circle">
-            <i class="fas fa-user-plus"></i>
-          </div>
-          <span>Criar Conta</span>
-        </a>
-        <a href="/login.html" class="icon-item" id="login" aria-label="Fazer login">
-          <div class="icon-circle">
-            <i class="fas fa-sign-in-alt"></i>
-          </div>
-          <span>Fazer Login</span>
-        </a>
-        <a href="/products-services.html" class="icon-item" id="products-services" aria-label="Ver produtos e serviços">
-          <div class="icon-circle">
-            <i class="fas fa-box-open"></i>
-          </div>
-          <span>Produtos</span>
-        </a>
-        <a href="/recover-access.html" class="icon-item" id="recover-access" aria-label="Recuperar acesso">
-          <div class="icon-circle">
-            <i class="fas fa-key"></i>
-          </div>
-          <span>Recuperar Acesso</span>
-        </a>
+      <div class="card" data-action="transactions">
+        <h3>Transações</h3>
+        <p>Veja todas as suas movimentações, extratos e pagamentos.</p>
+        <button data-action="open-transactions">Ver Histórico</button>
       </div>
     </section>
   </main>
 
-  <!-- Modal Geral -->
-  <div class="modal" id="exampleModal">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Ação</h5>
-          <button type="button" class="modal-close" data-modal-close>Fechar</button>
-        </div>
-        <div class="modal-body" id="modalBody"></div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-modal-close>Fechar</button>
-          <button type="button" class="btn btn-primary" id="modalConfirm">Confirmar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal para Área Pix -->
-  <div class="modal" id="pixAreaModal">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content pix-modal-content">
-        <div class="modal-header pix-modal-header">
-          <h5 class="modal-title" id="pixAreaModalTitle">Área Pix</h5>
-          <button type="button" class="modal-close" data-modal-close>Fechar</button>
-        </div>
-        <div class="modal-body pix-modal-body">
-          <div class="pix-icon-grid">
-            <div class="pix-icon-item" data-pix-action="pixTransfer" aria-label="Realizar transferência Pix" role="button" tabindex="0">
-              <div class="pix-icon-circle">
-                <i class="fas fa-exchange-alt"></i>
-              </div>
-              <span>Transferência Pix</span>
-            </div>
-            <div class="pix-icon-item" data-pix-action="pixPayment" aria-label="Pagar com Pix" role="button" tabindex="0">
-              <div class="pix-icon-circle">
-                <i class="fas fa-qrcode"></i>
-              </div>
-              <span>Pagamento Pix</span>
-            </div>
-            <div class="pix-icon-item" data-pix-action="pixCharge" aria-label="Criar cobrança Pix" role="button" tabindex="0">
-              <div class="pix-icon-circle">
-                <i class="fas fa-money-bill"></i>
-              </div>
-              <span>Cobrança Pix</span>
-            </div>
-            <div class="pix-icon-item" data-pix-action="pixSchedule" aria-label="Agendar Pix" role="button" tabindex="0">
-              <div class="pix-icon-circle">
-                <i class="fas fa-calendar-alt"></i>
-              </div>
-              <span>Agendar Pix</span>
-            </div>
-            <div class="pix-icon-item" data-pix-action="pixKeys" aria-label="Criar chave Pix" role="button" tabindex="0">
-              <div class="pix-icon-circle">
-                <i class="fas fa-key"></i>
-              </div>
-              <span>Criar Chave Pix</span>
-            </div>
-            <div class="pix-icon-item" data-pix-action="pixMyKeys" aria-label="Ver minhas chaves Pix" role="button" tabindex="0">
-              <div class="pix-icon-circle">
-                <i class="fas fa-list"></i>
-              </div>
-              <span>Minhas Chaves</span>
-            </div>
-          </div>
-          <div id="pixKeysResult"></div>
-        </div>
-        <div class="modal-footer pix-modal-footer">
-          <button type="button" class="btn btn-secondary" data-modal-close>Fechar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal para Área de Cartões -->
-  <div class="modal" id="cardsAreaModal">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content cards-modal-content">
-        <div class="modal-header cards-modal-header">
-          <h5 class="modal-title" id="cardsAreaModalTitle">Área de Cartões</h5>
-          <button type="button" class="modal-close" data-modal-close>Fechar</button>
-        </div>
-        <div class="modal-body cards-modal-body">
-          <div class="cards-icon-grid">
-            <div class="cards-icon-item" data-cards-action="createVirtualCard" aria-label="Criar cartão virtual" role="button" tabindex="0">
-              <div class="cards-icon-circle">
-                <i class="fas fa-mobile-alt"></i>
-              </div>
-              <span>Criar Cartão Virtual</span>
-            </div>
-            <div class="cards-icon-item" data-cards-action="replacePhysicalCard" aria-label="Solicitar novo cartão físico" role="button" tabindex="0">
-              <div class="cards-icon-circle">
-                <i class="fas fa-exchange-alt"></i>
-              </div>
-              <span>Solicitar Novo Cartão</span>
-            </div>
-            <div class="cards-icon-item" data-cards-action="viewVirtualCards" aria-label="Ver meus cartões virtuais" role="button" tabindex="0">
-              <div class="cards-icon-circle">
-                <i class="fas fa-credit-card"></i>
-              </div>
-              <span>Ver meus Cartões Virtuais</span>
-            </div>
-            <div class="cards-icon-item" data-cards-action="viewPhysicalCards" aria-label="Ver cartões físicos" role="button" tabindex="0">
-              <div class="cards-icon-circle">
-                <i class="fas fa-id-card"></i>
-              </div>
-              <span>Ver Cartões Físicos</span>
-            </div>
-          </div>
-          <div id="cardsContainer"></div>
-        </div>
-        <div class="modal-footer cards-modal-footer">
-          <button type="button" class="btn btn-secondary" data-modal-close>Fechar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal para Área de Investimentos -->
-  <div class="modal" id="investmentsAreaModal">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content investments-modal-content">
-        <div class="modal-header investments-modal-header">
-          <h5 class="modal-title" id="investmentsAreaModalTitle">Área de Investimentos</h5>
-          <button type="button" class="modal-close" data-modal-close>Fechar</button>
-        </div>
-        <div class="modal-body investments-modal-body">
-          <div class="investments-icon-grid">
-            <div class="investments-icon-item" data-investments-action="investMoney" aria-label="Investir" role="button" tabindex="0">
-              <div class="investments-icon-circle">
-                <i class="fas fa-chart-line"></i>
-              </div>
-              <span>Investir</span>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer investments-modal-footer">
-          <button type="button" class="btn btn-secondary" data-modal-close>Fechar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal para Área de Transações -->
-  <div class="modal" id="transactionsAreaModal">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content transactions-modal-content">
-        <div class="modal-header transactions-modal-header">
-          <h5 class="modal-title" id="transactionsAreaModalTitle">Área de Transações</h5>
-          <button type="button" class="modal-close" data-modal-close>Fechar</button>
-        </div>
-        <div class="modal-body transactions-modal-body">
-          <div class="transactions-icon-grid">
-            <div class="transactions-icon-item" data-transactions-action="transferMoney" aria-label="Realizar transferência" role="button" tabindex="0">
-              <div class="transactions-icon-circle">
-                <i class="fas fa-exchange-alt"></i>
-              </div>
-              <span>Transferir</span>
-            </div>
-            <div class="transactions-icon-item" data-transactions-action="depositMoney" aria-label="Fazer depósito" role="button" tabindex="0">
-              <div class="transactions-icon-circle">
-                <i class="fas fa-money-check-alt"></i>
-              </div>
-              <span>Depositar</span>
-            </div>
-            <div class="transactions-icon-item" data-transactions-action="withdrawMoney" aria-label="Sacar" role="button" tabindex="0">
-              <div class="transactions-icon-circle">
-                <i class="fas fa-money-bill-wave"></i>
-              </div>
-              <span>Sacar</span>
-            </div>
-            <div class="transactions-icon-item" data-transactions-action="payBill" aria-label="Pagar boleto" role="button" tabindex="0">
-              <div class="transactions-icon-circle">
-                <i class="fas fa-barcode"></i>
-              </div>
-              <span>Pagar</span>
-            </div>
-            <div class="transactions-icon-item" data-transactions-action="rechargePhone" aria-label="Recarregar celular" role="button" tabindex="0">
-              <div class="transactions-icon-circle">
-                <i class="fas fa-mobile-alt"></i>
-              </div>
-              <span>Recarga</span>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer transactions-modal-footer">
-          <button type="button" class="btn btn-secondary" data-modal-close>Fechar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal para Área de Financiamentos -->
-  <div class="modal" id="financingAreaModal">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content financing-modal-content">
-        <div class="modal-header financing-modal-header">
-          <h5 class="modal-title" id="financingAreaModalTitle">Área de Financiamentos</h5>
-          <button type="button" class="modal-close" data-modal-close>Fechar</button>
-        </div>
-        <div class="modal-body financing-modal-body">
-          <div class="financing-icon-grid">
-            <div class="financing-icon-item" data-financing-action="getLoan" aria-label="Solicitar empréstimo" role="button" tabindex="0">
-              <div class="financing-icon-circle">
-                <i class="fas fa-coins"></i>
-              </div>
-              <span>Empréstimo</span>
-            </div>
-            <div class="financing-icon-item" data-financing-action="financeProperty" aria-label="Financiamento imobiliário" role="button" tabindex="0">
-              <div class="financing-icon-circle">
-                <i class="fas fa-home"></i>
-              </div>
-              <span>Financiamento Imobiliário</span>
-            </div>
-            <div class="financing-icon-item" data-financing-action="financeVehicle" aria-label="Financiamento de veículo" role="button" tabindex="0">
-              <div class="financing-icon-circle">
-                <i class="fas fa-car"></i>
-              </div>
-              <span>Financiamento de Veículo</span>
-            </div>
-            <div class="financing-icon-item" data-financing-action="financePersonal" aria-label="Financiamento pessoal" role="button" tabindex="0">
-              <div class="financing-icon-circle">
-                <i class="fas fa-user"></i>
-              </div>
-              <span>Financiamento Pessoal</span>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer financing-modal-footer">
-          <button type="button" class="btn btn-secondary" data-modal-close>Fechar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <footer>
-    <p>© 2025 VascoBank. Todos os direitos reservados.</p>
-    <div class="social-icons">
-      <a href="#" class="social-icon" aria-label="Facebook do VascoBank"><i class="fab fa-facebook-f"></i></a>
-      <a href="#" class="social-icon" aria-label="Twitter do VascoBank"><i class="fab fa-x-twitter"></i></a>
-      <a href="#" class="social-icon" aria-label="Instagram do VascoBank"><i class="fab fa-instagram"></i></a>
-      <a href="#" class="social-icon" aria-label="LinkedIn do VascoBank"><i class="fab fa-linkedin-in"></i></a>
-    </div>
+    <p>&copy; 2025 VascoBank. Todos os direitos reservados.</p>
   </footer>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
-  <script src="/js/preload.js"></script>
-  <script src="/js/dashboard.js"></script>
+  <script type="module" src="./js/main.js"></script>
+  <!-- Corrigido o caminho do script abaixo -->
+  <script type="module" src="./js/utils/apiFetch.js"></script>
 </body>
 </html>

@@ -6,7 +6,6 @@ const fs = require('fs');
 const helmet = require('helmet');
 require('dotenv').config();
 
-
 // Importa middlewares e rotas
 const auth = require('./middleware/auth.js');
 const resetRoutes = require('./routes/resetRoutes');
@@ -33,6 +32,7 @@ const models = [
   './models/Investment',
   './models/VirtualCard',
 ];
+
 models.forEach(modelPath => {
   try {
     const fullPath = path.join(__dirname, `${modelPath}.js`);
@@ -56,7 +56,7 @@ app.use(express.static(path.join(__dirname, '../frontend/pages')));
 app.use('/image', express.static(path.join(__dirname, '../frontend/pages/img')));
 app.use(cors({
   origin: ['http://localhost:5000', 'http://localhost:5173'],
-  credentials: true
+  credentials: true,
 }));
 
 // Logger simples para requisições
@@ -72,7 +72,13 @@ app.use(helmet.contentSecurityPolicy({
     scriptSrc: ["'self'", "https://code.jquery.com", "https://stackpath.bootstrapcdn.com"],
     styleSrc: ["'self'", "https://stackpath.bootstrapcdn.com"],
     imgSrc: ["'self'", "data:"],
-    connectSrc: ["'self'", "http://localhost:5000", "https://api.currencylayer.com", "https://api.coingecko.com", "https://economia.awesomeapi.com.br"],
+    connectSrc: [
+      "'self'",
+      "http://localhost:5000",
+      "https://api.currencylayer.com",
+      "https://api.coingecko.com",
+      "https://economia.awesomeapi.com.br"
+    ],
     fontSrc: ["'self'"],
     objectSrc: ["'none'"],
     upgradeInsecureRequests: [],
@@ -102,16 +108,18 @@ mongoose.connection.on('reconnected', () => {
   console.log('MongoDB reconectado com sucesso!');
 });
 
-// Rotas API
-app.use('/api/users', userRoutes);
-app.use('/api/users/reset-password', resetRoutes); // rota específica para reset de senha
+// Rotas API — removi duplicações e ordens conflitantes
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/users', userRoutes);  // rota /api/users/me deve estar aqui no próprio userRoutes
+app.use('/api/users/reset-password', resetRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/login', loginRoutes);
 app.use('/api/cards', auth, cardRoutes);
 app.use('/api/pix', auth, pixRoutes);
-app.use('/api/loans', auth, loanRoutes);
 app.use('/api/investments', auth, investmentRoutes);
-app.use('/api/virtualCards', virtualCardRoutes); // Sem auth por escolha sua
+app.use('/api/loans', auth, loanRoutes);
+app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/virtualCards', virtualCardRoutes); // Sem auth, como você escolheu
 app.use('/api/financial', auth, financialRoutes);
 app.get('/api/transactions/history', auth, getTransactionHistory);
 app.use('/api/quotes', quotesRouter);
@@ -131,7 +139,6 @@ app.use((err, req, res, next) => {
   console.error('Erro no servidor:', err.message, err.stack);
   res.status(500).json({ error: 'Erro interno do servidor' });
 });
-
 
 // Inicia servidor
 const PORT = process.env.PORT || 5000;

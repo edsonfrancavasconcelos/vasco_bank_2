@@ -1,9 +1,14 @@
-// C:\Users\edson\OneDrive\Documents\Meus_Projetos\Vasco_bank_2\backend\routes\investmentRoutes.js
 const express = require('express');
 const router = express.Router();
-const investmentController = require('../controllers/investmentController');
+const auth = require('../middleware/auth');
+const {
+  listInvestments,
+  applyInvestment,
+  redeemInvestment
+} = require('../controllers/investmentController');
 
-router.post('/', investmentController.createInvestment);
-router.get('/', investmentController.getUserInvestments);
+router.get('/', auth, listInvestments);
+router.post('/apply', auth, applyInvestment);
+router.post('/redeem', auth, redeemInvestment);
 
 module.exports = router;

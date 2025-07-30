@@ -1,13 +1,14 @@
-// backend/routes/loans.js
 const express = require('express');
 const router = express.Router();
-const loanController = require('../controllers/loanController');
-const authMiddleware = require('../middleware/auth');
+const auth = require('../middleware/auth');
+const {
+  listLoans,
+  requestLoan,
+  payLoan
+} = require('../controllers/loanController');
 
-router.post('/request', authMiddleware, loanController.createLoan);
-router.post('/financing/property', authMiddleware, loanController.financeProperty);
-router.post('/financing/vehicle', authMiddleware, loanController.financeVehicle);
-router.post('/financing/personal', authMiddleware, loanController.financePersonal);
-router.get('/user', authMiddleware, loanController.getUserLoans);
+router.get('/', auth, listLoans);
+router.post('/request', auth, requestLoan);
+router.post('/pay', auth, payLoan);
 
 module.exports = router;

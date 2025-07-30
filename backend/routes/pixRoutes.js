@@ -1,23 +1,18 @@
-// ./routes/pixRoutes.js
 const express = require('express');
 const router = express.Router();
-const {
-  transferPix,
-  payPix,
-  chargePix,
-  schedulePix,
-  registerPixKey,
-  getPixKeys, // Ensure this is included
-  deletePixKey,
-} = require('../controllers/pixController');
 const auth = require('../middleware/auth');
+const {
+  getPixKeys,
+  createPixKey,
+  deletePixKey,
+  sendPix,
+  receivePix
+} = require('../controllers/pixController');
 
-router.post('/transfer', auth, transferPix);
-router.post('/pay', auth, payPix);
-router.post('/charge', auth, chargePix);
-router.post('/schedule', auth, schedulePix);
-router.post('/registerKey', auth, registerPixKey);
-router.get('/myKeys', auth, getPixKeys);
+router.get('/keys', auth, getPixKeys);
+router.post('/keys', auth, createPixKey);
 router.delete('/keys/:id', auth, deletePixKey);
+router.post('/send', auth, sendPix);
+router.post('/receive', auth, receivePix);
 
 module.exports = router;

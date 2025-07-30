@@ -1,11 +1,13 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
+// Esquema para chave Pix
 const pixKeySchema = new mongoose.Schema({
-  keyType: { type: String, required: true }, // "CPF", "EMAIL", "PHONE", "RANDOM"
-  key: { type: String, required: true }, // Sem unique aqui, o índice composto cuida disso
+  keyType: { type: String, required: true }, // CPF, EMAIL, PHONE, RANDOM
+  key: { type: String, required: true },
 });
 
+// Esquema de usuário
 const userSchema = new mongoose.Schema({
   fullName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -15,15 +17,15 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   accountNumber: { type: String, required: true, unique: true },
   balance: { type: Number, default: 0 },
-  pixKeys: { type: [pixKeySchema], default: [] }, // Array de chaves Pix com default vazio
+  pixKeys: { type: [pixKeySchema], default: [] },
   createdAt: { type: Date, default: Date.now },
 
-  // Campos para recuperação de senha:
+  // Recuperação de senha
   resetToken: { type: String },
   resetTokenExpires: { type: Date },
 });
 
-// Índice único parcial pra pixKeys.key, ignorando null/undefined
+// Índice único parcial para as chaves Pix (evita duplicação global de uma mesma chave)
 userSchema.index(
   { "pixKeys.key": 1 },
   {
@@ -32,15 +34,15 @@ userSchema.index(
   }
 );
 
+// Hash da senha antes de salvar
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    console.log("Hashing password para:", this.email);
     this.password = await bcrypt.hash(this.password, 10);
-    console.log("Senha hasheada:", this.password);
   }
   next();
 });
 
+// Método para comparar senha fornecida com hash armazenado
 userSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
