@@ -5,13 +5,13 @@ const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 
-const cardRoutes = require('./routes/cardRoutes');
-const pixRoutes = require('./routes/pixRoutes');
-const emprestimoRoutes = require('./routes/emprestimoRoutes');
-const userRoutes = require('./routes/userRoutes');
-const transactionRoutes = require("./routes/transactionRoutes");
+const cardRoutes = require('./backend/routes/cardRoutes');
+const pixRoutes = require('./backend/routes/pixRoutes');
+const emprestimoRoutes = require('./backend/routes/emprestimoRoutes');
+const userRoutes = require('./backend/routes/userRoutes');
+const transactionRoutes = require("./backend/routes/transactionRoutes");
 
-const app = require('../backend/server');
+const app = require('./server');
 
 const app = express();
 
