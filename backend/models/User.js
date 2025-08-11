@@ -1,50 +1,91 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+// backend/models/User.js
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
-// Esquema para chave Pix
-const pixKeySchema = new mongoose.Schema({
-  keyType: { type: String, required: true }, // CPF, EMAIL, PHONE, RANDOM
-  key: { type: String, required: true },
+// Schema para o histórico de transações
+const historicoSchema = new mongoose.Schema({
+  data: { type: Date, required: true },
+  descricao: { type: String, required: true },
+  valor: { type: Number, required: true }
 });
 
-// Esquema de usuário
-const userSchema = new mongoose.Schema({
-  fullName: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  cpf: { type: String, required: true, unique: true },
-  rg: { type: String, required: true },
-  address: { type: String, required: true },
-  password: { type: String, required: true },
-  accountNumber: { type: String, required: true, unique: true },
-  balance: { type: Number, default: 0 },
-  pixKeys: { type: [pixKeySchema], default: [] },
-  createdAt: { type: Date, default: Date.now },
-
-  // Recuperação de senha
-  resetToken: { type: String },
-  resetTokenExpires: { type: Date },
+// Schema principal do usuário
+const usuarioSchema = new mongoose.Schema({
+  nome: { 
+    type: String, 
+    required: true, 
+    trim: true 
+  },
+  email: { 
+    type: String, 
+    required: true, 
+    unique: true, 
+    lowercase: true, 
+    trim: true 
+  },
+  cpf: { 
+    type: String, 
+    required: true, 
+    unique: true, 
+    trim: true,
+    validate: {
+      validator: function (v) {
+        return /^\d{11}$/.test(v); // Valida CPF com 11 dígitos
+      },
+      message: 'CPF deve conter exatamente 11 dígitos'
+    }
+  },
+  telefone: { 
+    type: String, 
+    trim: true 
+  },
+  endereco: { 
+    type: String, 
+    trim: true 
+  },
+  senha: { 
+    type: String, 
+    required: true 
+  },
+  numeroConta: { 
+    type: String, 
+    required: true, 
+    unique: true, 
+    trim: true 
+  },
+  saldo: { 
+    type: Number, 
+    default: 0, 
+    min: 0 
+  },
+  fatura: { 
+    type: Number, 
+    default: 0, 
+    min: 0 
+  },
+  historicoFatura: [historicoSchema],
+  historicoSaldo: [historicoSchema]
+}, { 
+  timestamps: true 
 });
 
-// Índice único parcial para as chaves Pix (evita duplicação global de uma mesma chave)
-userSchema.index(
-  { "pixKeys.key": 1 },
-  {
-    unique: true,
-    partialFilterExpression: { "pixKeys.key": { $exists: true, $ne: null } },
+// Middleware para hashear a senha
+usuarioSchema.pre('save', async function (next) {
+  if (!this.isModified('senha')) return next();
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.senha = await bcrypt.hash(this.senha, salt);
+    next();
+  } catch (err) {
+    next(err);
   }
-);
-
-// Hash da senha antes de salvar
-userSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
-  next();
 });
 
-// Método para comparar senha fornecida com hash armazenado
-userSchema.methods.comparePassword = async function (password) {
-  return await bcrypt.compare(password, this.password);
+// Método para comparar senhas
+usuarioSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.senha);
 };
 
-module.exports = mongoose.model("User", userSchema);
+
+// Exporta o modelo
+module.exports = mongoose.model('Usuario', usuarioSchema);

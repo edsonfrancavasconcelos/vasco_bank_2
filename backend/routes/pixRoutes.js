@@ -1,18 +1,32 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
+
 const {
-  getPixKeys,
-  createPixKey,
-  deletePixKey,
-  sendPix,
-  receivePix
+  getChavesPix,
+  criarChavePix,
+  getHistoricoPix,
+  enviarPix,
+  receberPix,
+  cobrarPix,
+  agendarPix,
+  getMinhasChavesPix,
+  lerQRCode,
 } = require('../controllers/pixController');
 
-router.get('/keys', auth, getPixKeys);
-router.post('/keys', auth, createPixKey);
-router.delete('/keys/:id', auth, deletePixKey);
-router.post('/send', auth, sendPix);
-router.post('/receive', auth, receivePix);
+const { protect } = require('../middleware/authMiddleware');
+
+// Aplica o middleware de autenticação a todas as rotas
+router.use(protect);
+
+// Definição das rotas
+router.get('/chaves', getChavesPix);
+router.post('/chaves', criarChavePix);
+router.get('/historico', getHistoricoPix);
+router.post('/enviar', enviarPix);
+router.post('/receber', receberPix); // Usa a função receberPix do controlador
+router.post('/agendar', agendarPix);
+router.post('/cobrar', cobrarPix);
+router.get('/minhas-chaves', getMinhasChavesPix);
+router.post('/ler-qrcode', lerQRCode);
 
 module.exports = router;

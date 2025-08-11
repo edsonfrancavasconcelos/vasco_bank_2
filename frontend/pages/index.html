@@ -2,65 +2,69 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VascoBank - Dashboard</title>
-  <link rel="stylesheet" href="../css/theme.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VascoBank</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
 
-  <header>
-    <h2>VascoBank</h2>
-    <nav>
-      <a href="index.html">Início</a>
-      <a href="login.html">Login</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="produtos.html">Produtos</a>
-      <a href="servicos.html">Serviços</a>
-      <a href="logout.html">Logout</a>
+<body style="background-color: #2a003f; color: #ffffff; font-family: 'Segoe UI', sans-serif;">
+ <header style="text-align: center; padding: 1.5rem 0;">
+    <img src="img/vb_bank.png" alt="Logo VascoBank" style="margin-bottom: 0.5rem; height: 60px;" />
+    <nav style="margin-top: 1rem;">
+      <a href="index.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Inicio</a>     
+      <a href="createUser.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Cadastro</a>
+      <a href="servicos.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Serviços</a>
+       <a href="login.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Entrar</a>    
+        <a href="dashboard.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Dashboard</a>
     </nav>
   </header>
 
-  <main class="container">
-    <section class="banner">
-      <h1>Bem-vindo ao VascoBank</h1>
-      <p>Gerencie todas as suas finanças em um só lugar</p>
-    </section>
+  <main class="container" style="padding: 2rem 1rem; display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+    
+    <div onclick="location.href='/login.html'" style="background-color: #5a0089; color: #ffffff; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transition: 0.3s; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff6600'; this.style.color='#000000';" onmouseout="this.style.backgroundColor='#5a0089'; this.style.color='#ffffff';">
+      <h2 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;">Login</h2>
+      <p>Entre na sua conta VascoBank</p>
+    </div>
 
-    <section>
-      <h2 class="section-title">Funcionalidades</h2>
-      <div class="flex">
-        <div class="card">
-          <h3>Pix</h3>
-          <p>Envie e receba pagamentos instantaneamente.</p>
-          <button onclick="location.href='pix.html'">Acessar Pix</button>
-        </div>
-        <div class="card">
-          <h3>Cartões</h3>
-          <p>Visualize e gerencie seus cartões físicos e virtuais.</p>
-          <button onclick="location.href='cartoes.html'">Meus Cartões</button>
-        </div>
-        <div class="card">
-          <h3>Investimentos</h3>
-          <p>Acompanhe sua carteira de investimentos.</p>
-          <button onclick="location.href='investimentos.html'">Ver Investimentos</button>
-        </div>
-        <div class="card">
-          <h3>Financiamentos</h3>
-          <p>Consulte seus financiamentos e opções de crédito.</p>
-          <button onclick="location.href='financiamentos.html'">Meus Financiamentos</button>
-        </div>
-        <div class="card">
-          <h3>Transações</h3>
-          <p>Histórico detalhado de movimentações da sua conta.</p>
-          <button onclick="location.href='transacoes.html'">Ver Transações</button>
-        </div>
-      </div>
-    </section>
+    <div onclick="location.href='/pix.html'" style="background-color: #5a0089; color: #ffffff; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transition: 0.3s; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff6600'; this.style.color='#000000';" onmouseout="this.style.backgroundColor='#5a0089'; this.style.color='#ffffff';">
+      <h2 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;">Pix</h2>
+      <p>Gerencie suas chaves e pagamentos Pix</p>
+    </div>
+     <div onclick="location.href='/transaction.html'" style="background-color: #5a0089; color: #ffffff; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transition: 0.3s; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff6600'; this.style.color='#000000';" onmouseout="this.style.backgroundColor='#5a0089'; this.style.color='#ffffff';">
+      <h2 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;">Transações</h2>
+      <p>Aqui é sua área de Transações</p>
+    </div>
+    <div onclick="location.href='cardArea.html'" style="background-color: #5a0089; color: #ffffff; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transition: 0.3s; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff6600'; this.style.color='#000000';" onmouseout="this.style.backgroundColor='#5a0089'; this.style.color='#ffffff';">
+      <h2 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;">Cartões</h2>
+      <p>Gerencie sueus Cartões</p>
+    </div>
+
+    <div onclick="location.href='/produtos.html'" style="background-color: #5a0089; color: #ffffff; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transition: 0.3s; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff6600'; this.style.color='#000000';" onmouseout="this.style.backgroundColor='#5a0089'; this.style.color='#ffffff';">
+      <h2 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;">Produtos</h2>
+      <p>Confira nossos produtos bancários</p>
+    </div>
+
+    <div onclick="location.href='/servicos.html'" style="background-color: #5a0089; color: #ffffff; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transition: 0.3s; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff6600'; this.style.color='#000000';" onmouseout="this.style.backgroundColor='#5a0089'; this.style.color='#ffffff';">
+      <h2 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;">Serviços</h2>
+      <p>Conheça nossos serviços exclusivos</p>
+    </div>
+
+    <div onclick="location.href='/servicos.html'" style="background-color: #5a0089; color: #ffffff; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transition: 0.3s; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff6600'; this.style.color='#000000';" onmouseout="this.style.backgroundColor='#5a0089'; this.style.color='#ffffff';">
+      <h2 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;">Empréstimos</h2>
+      <p>Conheça nossos serviços exclusivos</p>
+    </div>
+
+    <div onclick="location.href='/servicos.html'" style="background-color: #5a0089; color: #ffffff; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transition: 0.3s; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff6600'; this.style.color='#000000';" onmouseout="this.style.backgroundColor='#5a0089'; this.style.color='#ffffff';">
+      <h2 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;">Seguros</h2>
+      <p>Conheça nossos serviços exclusivos</p>
+    </div>
+
   </main>
 
-  <footer>
-    <p>&copy; 2025 VascoBank. Todos os direitos reservados.</p>
-  </footer>
-
+  <!-- Bootstrap JS -->
+   <script type="module" src="/pages/js/logout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+  <script src="js/.js"></script>
 </body>
 </html>

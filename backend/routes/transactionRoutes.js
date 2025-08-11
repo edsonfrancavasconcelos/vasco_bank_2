@@ -1,11 +1,14 @@
-// backend/routes/transactionRoutes.js
-
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const transactionController = require('../controllers/transactionController');
-const authenticate = require('../middleware/authenticate');
+const { criarTransacao, listarTransacoesComNomes } = require("../controllers/transactionsController");
+const { protect } = require("../middleware/authMiddleware"); // middleware que protege rotas
 
-router.get('/', authenticate, transactionController.getTransactions);
-router.post('/', authenticate, transactionController.createTransaction);
+console.log("transactionsController =", { criarTransacao, listarTransacoesComNomes });
+
+// Rota POST recebe o tipo da transação pela URL (:tipo)
+router.post("/:tipo", protect, criarTransacao);
+
+// Lista todas as transações do usuário logado
+router.get("/", protect, listarTransacoesComNomes);
 
 module.exports = router;

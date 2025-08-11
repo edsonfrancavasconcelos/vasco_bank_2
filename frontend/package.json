@@ -1,21 +1,20 @@
 {
-  "name": "vasco_bank_frontend",
+  "name": "frontend",
   "version": "1.0.0",
-  "description": "Frontend para o sistema bancário Vasco Bank - Criado em 5 de junho de 2025, 20:45 -03",
-  "main": "index.js",
+  "description": "",
+  "main": "vite.config.js",
   "scripts": {
-    "start": "vite",
-    "dev:nodemon": "nodemon --watch pages/js --ext js --exec 'echo Files changed, Vite handles reload'",
+    "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "tailwind": "tailwindcss -i ./pages/css/input.css -o ./pages/css/output.css --watch"
   },
-  "dependencies": {
-    "axios": "^1.6.0",
-    "bootstrap": "^4.6.2",
-    "jquery": "^3.7.1"
-  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "vite": "^5.0.0",
-    "nodemon": "^3.0.1"
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11"
   }
 }
