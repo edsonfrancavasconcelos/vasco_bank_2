@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cartões - VascoBank</title>
+  <script type="module" crossorigin src="/assets/cardArea-Dazps7IF.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-B5Qt9EMX.js">
+</head>
+<body style="background-color: #121212; color: #ffffff; font-family: 'Segoe UI', sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; box-sizing: border-box;">
+
+  <header style="text-align: center; padding: 1.5rem 0; width: 100%; max-width: 480px;">
+    <img src="/assets/vb_bank-CA8mX9rQ.png" alt="Logo VascoBank" style="margin-bottom: 0.5rem; height: 60px;" />
+    <nav style="margin-top: 1rem;">
+      <a href="index.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Inicio</a>     
+      <a href="createUser.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Cadastro</a>
+      <a href="servicos.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Serviços</a>
+      <a href="login.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Entrar</a>    
+      <a href="dashboard.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Dashboard</a>
+    </nav>
+  </header>
+
+  <h1 style="color: #ff6600; font-size: 32px; margin-bottom: 20px; text-align: center; width: 100%; max-width: 480px;">Gerenciamento de Cartões</h1>
+
+  <ul style="list-style: none; padding: 0; max-width: 480px; width: 100%; margin: 0 auto;">
+    <li style="margin-bottom: 12px;">
+      <button type="button" id="btnCriarFisico" style="width: 100%; padding: 12px 24px; background-color: #ff6600; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Criar Cartão Físico</button>
+    </li>
+    <li style="margin-bottom: 12px;">
+      <button type="button" id="btnCriarVirtual" style="width: 100%; padding: 12px 24px; background-color: #ff6600; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Criar Cartão Virtual</button>
+    </li>
+    <li style="margin-bottom: 12px;">
+      <button type="button" id="btnPedirNovo" style="width: 100%; padding: 12px 24px; background-color: #ff6600; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Pedir Novo Cartão (Problemas)</button>
+    </li>
+    <li style="margin-bottom: 12px;">
+      <button type="button" id="btnVerCartoes" style="width: 100%; padding: 12px 24px; background-color: #ff6600; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Ver Meus Cartões</button>
+    </li>
+  </ul>
+
+  <!-- Seção Criar Cartão Virtual -->
+  <section id="secCriarVirtual" style="display:none; background-color:#1e1e1e; padding:20px; border-radius:12px; max-width:480px; width:100%; box-sizing:border-box; margin-bottom: 30px;">
+    <h2 style="color:#ff6600; margin-bottom:16px;">Criar Cartão Virtual</h2>
+    <form id="formCriarVirtual" style="display:flex; flex-direction: column;">
+      <label for="nomeTitular" style="margin-bottom:6px; font-weight:600;">Nome do Titular</label>
+      <input type="text" id="nomeTitular" required style="padding:8px; border-radius:6px; border:none; margin-bottom:12px; font-size: 14px;" placeholder="Seu nome completo" />
+
+      <button type="submit" style="background-color:#ff6600; color:#fff; border:none; border-radius:8px; padding:12px; cursor:pointer; font-size:16px; margin-bottom: 12px;">Criar Cartão</button>
+    </form>
+
+    <!-- Cartão Virtual gerado -->
+    <div id="cartaoVirtualContainer" style="display:none; background: linear-gradient(135deg, #FF6600, #cc5200); border-radius: 15px; padding: 20px; color: white; box-shadow: 0 4px 15px rgba(255,102,0,0.6); font-family: 'Segoe UI', sans-serif; position: relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+        <img src="/assets/vb_bank-CA8mX9rQ.png" alt="Logo VBank" style="height: 30px;" />
+        <img src="data:image/png;base64,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" alt="Logo MasterCard" style="height: 30px;" />
+      </div>
+      <div style="font-size: 18px; letter-spacing: 3px; margin-bottom: 12px;" id="numeroCartaoVirtual">•••• •••• •••• ••••</div>
+      <div style="display:flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px;">
+        <div id="nomeCartaoVirtual">NOME TITULAR</div>
+        <div style="display:flex; align-items:center; gap: 6px;">
+          <span>CVV:</span>
+          <input type="password" id="cvvVirtual" value="•••" readonly style="width: 50px; background: transparent; border: none; color: white; font-weight: bold; font-size: 16px; letter-spacing: 4px;"/>
+          <button type="button" id="btnToggleCvv" style="background: none; border:none; color: white; cursor: pointer; font-weight: bold; font-size: 16px; user-select:none;">👁️</button>
+          <button type="button" id="btnCopyCvv" title="Copiar CVV" style="background: none; border:none; color: white; cursor: pointer; font-weight: bold; font-size: 16px; user-select:none;">📋</button>
+        </div>
+      </div>
+      <button type="button" id="btnCopyNumero" title="Copiar Número" style="background:#ff6600; border:none; color:#fff; border-radius: 6px; padding: 8px 12px; cursor:pointer; font-size:14px;">Copiar Número</button>
+    </div>
+  </section>
+
+
+
+  <!-- Seção Criar Cartão Físico -->
+  <section id="secCriarFisico" style="display:none; background-color:#1e1e1e; padding:20px; border-radius:12px; max-width:480px; width:100%; box-sizing:border-box; margin-bottom: 30px;">
+    <h2 style="color:#ff6600; margin-bottom:16px;">Criar Cartão Físico</h2>
+    <form id="formCriarFisico" style="display:flex; flex-direction: column;">
+      <label for="nomeFisico" style="margin-bottom:6px; font-weight:600;">Nome do Titular</label>
+      <input type="text" id="nomeFisico" required style="padding:8px; border-radius:6px; border:none; margin-bottom:12px; font-size: 14px;" placeholder="Seu nome completo" />
+      <button type="submit" style="background-color:#ff6600; color:#fff; border:none; border-radius:8px; padding:12px; cursor:pointer; font-size:16px;">Solicitar Cartão Físico</button>
+    </form>
+  </section>
+
+  <!-- Seção Pedir Novo Cartão (problemas) -->
+  <section id="secPedirNovo" style="display:none; background-color:#1e1e1e; padding:20px; border-radius:12px; max-width:480px; width:100%; box-sizing:border-box; margin-bottom: 30px;">
+    <h2 style="color:#ff6600; margin-bottom:16px;">Pedir Novo Cartão</h2>
+    <form id="formPedirNovo" style="display:flex; flex-direction: column;">
+      <label for="motivo" style="margin-bottom:6px; font-weight:600;">Motivo do Pedido</label>
+      <textarea id="motivo" rows="4" required style="padding:8px; border-radius:6px; border:none; margin-bottom:12px; font-size: 14px;" placeholder="Descreva o problema ou motivo para pedir novo cartão"></textarea>
+      <button type="submit" style="background-color:#ff6600; color:#fff; border:none; border-radius:8px; padding:12px; cursor:pointer; font-size:16px;">Enviar Pedido</button>
+    </form>
+  </section>
+
+  <!-- Seção Ver Meus Cartões -->
+  <section id="secVerCartoes" style="display:none; background-color:#1e1e1e; padding:20px; border-radius:12px; max-width:480px; width:100%; box-sizing:border-box; margin-bottom: 30px;">
+    <h2 style="color:#ff6600; margin-bottom:16px;">Meus Cartões</h2>
+    <div id="listaCartoes" style="color:#ddd; font-size: 14px;">
+      <p>Nenhum cartão cadastrado.</p>
+    </div>
+  </section>
+
+
+
+
+</body>
+</html>

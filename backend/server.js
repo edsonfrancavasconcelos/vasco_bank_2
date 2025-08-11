@@ -3,17 +3,19 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const cors = require('cors');
-const fs = require('fs');
 const helmet = require('helmet');
-const cardRoutes = require('./routes/cardRoutes'); // <-- NOVO
+
+const cardRoutes = require('./routes/cardRoutes');
 const pixRoutes = require('./routes/pixRoutes');
 const emprestimoRoutes = require('./routes/emprestimoRoutes');
-const userRoutes = require('./routes/userRoutes'); // <-- Adicione isso aqui
+const userRoutes = require('./routes/userRoutes');
 const transactionRoutes = require("./routes/transactionRoutes");
+
+const app = require('../backend/server');
 
 const app = express();
 
-// Middleware para responder verificação do Let's Encrypt
+// Middleware para verificação do Let's Encrypt
 app.use('/.well-known', (req, res) => {
   res.status(204).end();
 });
@@ -22,21 +24,9 @@ app.use('/.well-known', (req, res) => {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-
-// Servir arquivos estáticos do frontend
-app.use(express.static(path.join(__dirname, '../frontend/pages')));
-app.use('/image', express.static(path.join(__dirname, '../frontend/pages/img')));
-
-// Servir o CSS manualmente
-app.use('/theme.css', (req, res) => {
-  const cssPath = path.join(__dirname, '../frontend/pages/css/theme.css');
-  res.setHeader('Content-Type', 'text/css');
-  fs.createReadStream(cssPath).pipe(res);
-});
-
 // CORS
 app.use(cors({
-  origin: ['http://localhost:5000', 'http://localhost:5173'],
+  origin: ['http://localhost:5000', 'http://localhost:5173'], // ajuste para produção
   credentials: true,
 }));
 
@@ -69,6 +59,22 @@ app.use((req, res, next) => {
   next();
 });
 
+// Rotas da API
+app.use('/api/user', userRoutes);
+app.use('/api/cards', cardRoutes);
+app.use('/api/pix', pixRoutes);
+app.use('/api/emprestimos', emprestimoRoutes);
+app.use('/api/transactions', transactionRoutes);
+
+// Serve arquivos estáticos do frontend buildado (Vite)
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+// SPA fallback - serve index.html para qualquer rota não de API
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api')) return res.status(404).json({ error: 'Rota não encontrada' });
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
+
 // Conexão com MongoDB
 const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/vasco_bank';
 console.log('Mongo URI:', mongoURI.replace(/:([^:@]+)@/, ':****@'));
@@ -92,29 +98,13 @@ mongoose.connection.on('reconnected', () => {
   console.log('MongoDB reconectado com sucesso!');
 });
 
-// ✅ ROTAS DA API
-app.use('/api/user', userRoutes); // <-- Adicione isso aqui
-app.use('/api/cards', cardRoutes); // <-- NOVO
-app.use('/api/pix', pixRoutes);
-app.use('/api/emprestimos', emprestimoRoutes)
-app.use("/api/transactions", transactionRoutes);
-
-
-// Tratamento de rota não encontrada da API
-app.use((req, res, next) => {
-  if (req.url.startsWith('/api/')) {
-    console.log('Rota API não encontrada:', req.method, req.url);
-    return res.status(404).json({ error: 'Rota não encontrada' });
-  }
-  next();
-});
-
-// Middleware de erro
+// Middleware de erro geral
 app.use((err, req, res, next) => {
   console.error('Erro no servidor:', err.message, err.stack);
   res.status(500).json({ error: err.message || 'Erro interno do servidor' });
 });
-
 // Start do servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor Vasco_bank rodando na porta ${PORT}`));
+//const PORT = process.env.PORT || 3000;
+//app.listen(PORT, () => console.log(`Servidor Vasco_bank rodando na porta ${PORT}`))
+
+module.exports = app;

@@ -1,0 +1,308 @@
+:root {
+  /* Cores principais */
+  --roxo-900: #2a003f; /* Roxo escuro */
+  --roxo-700: #5a0089; /* Roxo médio */
+  --roxo-500: #9c27b0; /* Roxo principal */
+  --roxo-300: #c06ddc; /* Roxo claro */
+  --roxo-100: #f0d9f8; /* Roxo muito claro */
+  --laranja-900: #7a2e00; /* Laranja escuro */
+  --laranja-700: #b34700; /* Laranja médio */
+  --laranja-500: #ff6600; /* Laranja principal */
+  --laranja-300: #ff944d; /* Laranja claro */
+  --laranja-100: #ffe0cc; /* Laranja muito claro */
+  --branco: #ffffff; /* Branco */
+  --cinza: #f4f4f4; /* Cinza claro */
+  --preto: #000000; /* Preto */
+  /* Fonte padrão */
+  --fonte-principal: 'Segoe UI', sans-serif;
+  /* Sombras */
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Reset e base */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--fonte-principal);
+  background-color: var(--cinza);
+  color: var(--preto);
+  min-height: 100vh;
+}
+
+/* Backgrounds */
+.bg-background { background-color: var(--cinza); }
+.bg-card { background-color: var(--branco); }
+.bg-modal { background-color: var(--roxo-900); }
+.bg-primary { background-color: var(--roxo-500); }
+.bg-roxo { background-color: var(--roxo-500); }
+.bg-roxo-700 { background-color: var(--roxo-700); }
+.bg-roxo-900 { background-color: var(--roxo-900); }
+.bg-laranja { background-color: var(--laranja-500); }
+.bg-laranja-700 { background-color: var(--laranja-700); }
+.bg-preto { background-color: var(--preto); }
+.bg-cinza { background-color: var(--cinza); }
+
+/* Textos */
+.text-text { color: var(--preto); }
+.text-primary { color: var(--roxo-500); }
+.text-muted {
+  color: var(--roxo-300);
+  font-size: 1.125rem;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.text-roxo { color: var(--roxo-500); }
+.text-laranja { color: var(--laranja-500); }
+.text-branco { color: var(--branco); }
+.text-preto { color: var(--preto); }
+
+/* Botões */
+.btn-roxo, button.bg-primary {
+  background-color: var(--roxo-500);
+  color: var(--branco);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-roxo:hover, button.bg-primary:hover {
+  background-color: var(--roxo-700);
+  transform: translateY(-2px);
+}
+
+.btn-laranja {
+  background-color: var(--laranja-500);
+  color: var(--branco);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-laranja:hover {
+  background-color: var(--laranja-700);
+  transform: translateY(-2px);
+}
+
+/* Cards */
+.card, .bg-card {
+  background-color: var(--branco);
+  color: var(--preto);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.bg-card:hover {
+  background-color: var(--roxo-500);
+  color: var(--branco);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-dialog {
+  width: 90%;
+  max-width: 600px;
+}
+
+.modal-content {
+  background-color: var(--branco);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s ease;
+}
+
+.modal-content:hover {
+  transform: scale(1.02);
+}
+
+/* Botão de fechar do modal */
+.btn-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--preto);
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-close:hover {
+  color: var(--roxo-500);
+  transform: scale(1.2);
+}
+
+/* Abas */
+.tabs {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.25rem;
+}
+
+.tabs li {
+  padding: 0.625rem 1.25rem;
+  cursor: pointer;
+  color: var(--roxo-300);
+  font-weight: 500;
+  transition: color 0.3s ease, border-bottom 0.3s ease;
+}
+
+.tabs li.active {
+  color: var(--roxo-500);
+  border-bottom: 2px solid var(--roxo-500);
+}
+
+.tabs li:hover {
+  color: var(--roxo-500);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Botões de ação do modal */
+.modal-action {
+  display: block;
+  width: 100%;
+  padding: 0.625rem;
+  margin: 0.3125rem 0;
+  background-color: var(--roxo-500);
+  color: var(--branco);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.modal-action:hover {
+  background-color: var(--roxo-700);
+  transform: translateY(-2px);
+}
+
+/* Fatura */
+.fatura {
+  margin-top: 1.25rem;
+}
+
+.fatura h4 {
+  font-size: 1.2rem;
+  margin-bottom: 0.625rem;
+  color: var(--roxo-500);
+}
+
+.fatura p {
+  margin-bottom: 0.625rem;
+  color: var(--preto);
+}
+
+.fatura button {
+  padding: 0.5rem 1rem;
+  margin-right: 0.625rem;
+  background-color: var(--laranja-500);
+  color: var(--branco);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.fatura button:hover {
+  background-color: var(--laranja-700);
+  transform: translateY(-2px);
+}
+
+/* Select */
+select.bg-modal {
+  background-color: var(--roxo-900);
+  color: var(--branco);
+  width: 100%;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: box-shadow 0.3s ease;
+}
+
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--roxo-500);
+}
+
+/* Utilitários */
+.rounded { border-radius: 8px; }
+.shadow { box-shadow: var(--shadow); }
+.shadow-lg { box-shadow: var(--shadow-hover); }
+.p-2 { padding: 0.5rem; }
+.p-4 { padding: 1rem; }
+.m-2 { margin: 0.5rem; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.w-full { width: 100%; }
+
+/* Ajustes para a grade do index.html */
+main.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 576px) {
+  main.grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  main.grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Ajustes para a grade do dashboard.html */
+@media (min-width: 992px) {
+  main.grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Ajustes responsivos para modais */
+@media (min-width: 640px) {
+  .modal-dialog {
+    width: 80%;
+  }
+}

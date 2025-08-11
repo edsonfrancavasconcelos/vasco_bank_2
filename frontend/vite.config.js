@@ -10,38 +10,31 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
-    },
-  },
-  server: {
-  proxy: {
-    '/cdn-cgi': {
-      target: 'http://localhost:5173',
-      changeOrigin: true,
-      bypass: (req, res, options) => {
-        return req.url;
+      '/cdn-cgi': {
+        target: 'http://localhost:5173',
+        changeOrigin: true,
+        bypass: (req, res, options) => {
+          return req.url;
+        },
       },
     },
   },
-},
   build: {
     outDir: 'dist',
     rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'pages/index.html'),
-        dashboard: resolve(__dirname, 'pages/dashboard.html'),
-        login: resolve(__dirname, 'pages/login.html'),
-        createAccount: resolve(__dirname, 'pages/create-account.html'),
-        createCard: resolve(__dirname, 'pages/create-card.html'),
-        productsService: resolve(__dirname, 'pages/products-service.html'),
-        recoverAccess: resolve(__dirname, 'pages/recover-access.html'),
-        pixArea: resolve(__dirname, 'pages/pix-area.html'),
-        minhasChaves: resolve(__dirname, 'pages/minhas-chaves.html'),
-        pagamentoPix: resolve(__dirname, 'pages/pagamento-pix.html'),
-        programarPix: resolve(__dirname, 'pages/programar-pix.html'),
-        registrarChavePix: resolve(__dirname, 'pages/registrar-chave-pix.html'),
-        statement: resolve(__dirname, 'pages/statement.html'),
-        transferencia: resolve(__dirname, 'pages/transferencia.html'),
-      },
+     input: {
+  main: resolve(__dirname, 'pages/index.html'),
+  dashboard: resolve(__dirname, 'pages/dashboard.html'),
+  login: resolve(__dirname, 'pages/login.html'),
+  createUser: resolve(__dirname, 'pages/createUser.html'),
+  cardArea: resolve(__dirname, 'pages/cardArea.html'),
+  emprestimos: resolve(__dirname, 'pages/emprestimos.html'),
+  pix: resolve(__dirname, 'pages/pix.html'),
+  produtos: resolve(__dirname, 'pages/produtos.html'),
+  servicos: resolve(__dirname, 'pages/servicos.html'),
+  transaction: resolve(__dirname, 'pages/transaction.html'),
+}
+
     },
   },
   publicDir: 'pages',

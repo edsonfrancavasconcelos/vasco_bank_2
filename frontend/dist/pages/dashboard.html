@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Minha Conta - VascoBank</title>
+  <script type="module" crossorigin src="/assets/dashboard-CLTBBdoR.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-B5Qt9EMX.js">
+</head>
+<body style="background:#121212; color:#fff; font-family:sans-serif; margin:0; padding:20px;">
+
+  <header style="text-align: center; padding: 1.5rem 0;">
+    <img src="/assets/vb_bank-CA8mX9rQ.png" alt="Logo VascoBank" style="margin-bottom: 0.5rem; height: 60px;" />
+    <nav style="margin-top: 1rem;">
+      <a href="index.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Início</a>     
+      <a href="createUser.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Cadastro</a>
+      <a href="servicos.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Serviços</a>
+      <a href="login.html" id="linkLogin" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Entrar</a>
+      <a href="#" id="linkLogout" style="display:none; color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Sair</a>
+      <a href="dashboard.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Dashboard</a>
+    </nav>
+  </header>
+
+  <h1 style="color:#ff6600;">Bem-vindo, <span id="nomeUsuario">...</span></h1>
+
+  <section style="background:#1e1e1e; padding:20px; border-radius:8px; max-width:400px; margin-bottom:30px;">
+    <p><strong>Número da Conta:</strong> <span id="numeroConta">...</span></p>
+    <p><strong>Saldo:</strong> R$ <span id="saldo">0,00</span></p>
+    <p><strong>Fatura Atual:</strong> R$ <span id="fatura">0,00</span></p>
+  </section>
+
+  <section style="max-width:400px; display:flex; gap:10px; margin-bottom:30px;">
+    <button id="btnFatura" style="flex:1; padding:12px; background:#ff6600; border:none; border-radius:6px; color:#fff; cursor:pointer;">Ver Histórico da Fatura</button>
+    <button id="btnSaldo" style="flex:1; padding:12px; background:#ff6600; border:none; border-radius:6px; color:#fff; cursor:pointer;">Ver Histórico do Saldo</button>
+  </section>
+
+  <section id="historico" style="max-width:400px; background:#1e1e1e; border-radius:8px; padding:15px; display:none; max-height:300px; overflow-y:auto;">
+    <h3 style="margin-top:0; color:#ff6600;">Histórico</h3>
+    <ul id="listaHistorico" style="list-style:none; padding-left:0; margin:0;"></ul>
+  </section>
+
+
+  <script>
+    // Exibir/ocultar botão de logout baseado no token
+    const token = localStorage.getItem('token');
+    const linkLogout = document.getElementById('linkLogout');
+    const linkLogin = document.getElementById('linkLogin');
+
+    if (token) {
+      linkLogout.style.display = 'inline';
+      linkLogin.style.display = 'none';
+    }
+
+    // Função de logout
+    linkLogout.addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('token');
+      localStorage.removeItem('userData');
+      alert('Você saiu da sua conta.');
+      window.location.href = 'login.html';
+    });
+  </script>
+
+</body>
+</html>
