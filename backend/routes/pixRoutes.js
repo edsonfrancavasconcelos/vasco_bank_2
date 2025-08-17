@@ -10,6 +10,7 @@ const {
   cobrarPix,
   agendarPix,
   getMinhasChavesPix,
+  excluirChavePix,
   lerQRCode,
 } = require('../controllers/pixController');
 
@@ -27,6 +28,7 @@ router.post('/receber', receberPix); // Usa a função receberPix do controlador
 router.post('/agendar', agendarPix);
 router.post('/cobrar', cobrarPix);
 router.get('/minhas-chaves', getMinhasChavesPix);
+router.delete('/chaves/:id', excluirChavePix)
 router.post('/ler-qrcode', lerQRCode);
 
 module.exports = router;

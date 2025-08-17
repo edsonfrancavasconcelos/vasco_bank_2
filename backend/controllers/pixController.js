@@ -345,6 +345,38 @@ async function listarPixTransacoes(req, res) {
     res.status(500).json({ error: 'Erro ao buscar transações Pix' });
   }
 }
+async function excluirChavePix(req, res) {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Usuário não autenticado' });
+    }
+
+    // Encontrar o PixUsuario do usuário logado
+    let pixUsuario = await PixUsuario.findOne({ usuario: userId });
+    if (!pixUsuario) {
+      return res.status(404).json({ error: 'Nenhuma chave Pix encontrada para este usuário' });
+    }
+
+    // Verificar se a chave com o ID fornecido existe
+    const chaveIndex = pixUsuario.chaves.findIndex(chave => chave._id.toString() === id);
+    if (chaveIndex === -1) {
+      return res.status(404).json({ error: 'Chave Pix não encontrada' });
+    }
+
+    // Remover a chave do array
+    pixUsuario.chaves.splice(chaveIndex, 1);
+    await pixUsuario.save();
+
+    console.log(`[${new Date().toISOString()}] Chave Pix excluída: ${id}`);
+    res.json({ message: 'Chave Pix excluída com sucesso' });
+  } catch (err) {
+    console.error(`[${new Date().toISOString()}] Erro ao excluir chave Pix:`, err.message, err.stack);
+    res.status(500).json({ error: 'Erro ao excluir chave Pix', details: err.message });
+  }
+}
 
 
 module.exports = {
@@ -356,5 +388,7 @@ module.exports = {
   cobrarPix,
   agendarPix,
   getMinhasChavesPix,
+  excluirChavePix,
+  listarPixTransacoes,
   lerQRCode,
 };

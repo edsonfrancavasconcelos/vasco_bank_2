@@ -119,7 +119,7 @@ function enviarPix() {
         alert('Pix enviado com sucesso!');
         document.getElementById('modalPix').remove();
       } catch (e) {
-        console.error(`[${new Date().toISOString()}] Erro em enviarPix:`, e.message);
+        console.error(`[${new Date().toISOString()}] Erro em enviarPix:`, e.message, e.stack);
         alert(`Erro: ${e.message}`);
       }
     });
@@ -193,12 +193,12 @@ async function receberPix() {
             <button onclick="document.getElementById('modalPix').remove()" style="background: #555; color: #fff; border:none; padding: 8px 16px; margin-top: 10px; border-radius: 6px; cursor: pointer;">Voltar</button>
           `);
         } catch (e) {
-          console.error(`[${new Date().toISOString()}] Erro em receberPix:`, e.message);
+          console.error(`[${new Date().toISOString()}] Erro em receberPix:`, e.message, e.stack);
           abrirModal('Erro', `<p style="color:red;">${e.message}</p>`);
         }
       });
     } catch (e) {
-      console.error(`[${new Date().toISOString()}] Erro ao buscar chaves:`, e.message);
+      console.error(`[${new Date().toISOString()}] Erro ao buscar chaves:`, e.message, e.stack);
       document.querySelector('#modalPix div:nth-child(2)').innerHTML = `<p style="color:red;">${e.message}</p>`;
     }
   });
@@ -243,7 +243,7 @@ function agendarPix() {
         alert(`Pix agendado com sucesso: ${data.message}`);
         document.getElementById('modalPix').remove();
       } catch (e) {
-        console.error(`[${new Date().toISOString()}] Erro em agendarPix:`, e.message);
+        console.error(`[${new Date().toISOString()}] Erro em agendarPix:`, e.message, e.stack);
         alert(`Erro: ${e.message}`);
       }
     });
@@ -291,7 +291,7 @@ function cobrarPix() {
           <button onclick="document.getElementById('modalPix').remove()" style="background: #555; color: #fff; border:none; padding: 8px 16px; margin-top: 10px; border-radius: 6px; cursor: pointer;">Voltar</button>
         `);
       } catch (e) {
-        console.error(`[${new Date().toISOString()}] Erro em cobrarPix:`, e.message);
+        console.error(`[${new Date().toISOString()}] Erro em cobrarPix:`, e.message, e.stack);
         alert(`Erro: ${e.message}`);
       }
     });
@@ -323,7 +323,7 @@ function lerQRCode() {
         alert(`Informações salvas: ${data.message}`);
         document.getElementById('modalPix').remove();
       } catch (e) {
-        console.error(`[${new Date().toISOString()}] Erro em lerQRCode:`, e.message);
+        console.error(`[${new Date().toISOString()}] Erro em lerQRCode:`, e.message, e.stack);
         alert(`Erro: ${e.message}`);
       }
     });
@@ -348,7 +348,7 @@ async function pixCopiaCola() {
         : '<p>Nenhuma chave cadastrada.</p>';
       document.querySelector('#modalPix div:nth-child(2)').innerHTML = html;
     } catch (e) {
-      console.error(`[${new Date().toISOString()}] Erro em pixCopiaCola:`, e.message);
+      console.error(`[${new Date().toISOString()}] Erro em pixCopiaCola:`, e.message, e.stack);
       document.querySelector('#modalPix div:nth-child(2)').innerHTML = `<p style="color:red;">${e.message}</p>`;
     }
   });
@@ -392,7 +392,7 @@ function cadastrarChavePix() {
         alert('Chave Pix cadastrada com sucesso!');
         document.getElementById('modalPix').remove();
       } catch (e) {
-        console.error(`[${new Date().toISOString()}] Erro em cadastrarChavePix:`, e.message);
+        console.error(`[${new Date().toISOString()}] Erro em cadastrarChavePix:`, e.message, e.stack);
         alert(`Erro: ${e.message}`);
       }
     });
@@ -409,54 +409,113 @@ async function verMinhasChaves() {
       });
       const chaves = await res.json();
       if (!res.ok) throw new Error(chaves.error || 'Erro ao carregar chaves');
+
       const lista = chaves.length
-        ? '<ul style="padding-left: 20px;">' + chaves.map(c => `<li>${c.tipo.toUpperCase()}: ${c.valor}</li>`).join('') + '</ul>'
+        ? `
+            <div class="cardPix" style="background:#222; color:#fff; padding:15px; border-radius:10px; margin-bottom:10px;">
+              ${chaves
+                .map(
+                  (c) => `
+                <div style="margin-bottom: 10px;">
+                  <strong>${c.tipo.toUpperCase()}:</strong> ${c.valor}
+                  <button class="btn-excluir" data-id="${c._id}" style="background: #ff6600; color: #fff; border:none; padding: 5px 10px; margin-left: 10px; border-radius: 4px; cursor: pointer;">Excluir</button>
+                </div>`
+                )
+                .join('')}
+            </div>
+          `
         : '<p>Nenhuma chave cadastrada.</p>';
+
       document.querySelector('#modalPix div:nth-child(2)').innerHTML = lista;
+
+      document.querySelectorAll('.btn-excluir').forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+          const id = e.target.getAttribute('data-id');
+          if (confirm('Deseja excluir esta chave Pix?')) {
+            await excluirChavePix(id);
+            verMinhasChaves();
+          }
+        });
+      });
     } catch (e) {
-      console.error(`[${new Date().toISOString()}] Erro em verMinhasChaves:`, e.message);
+      console.error(`[${new Date().toISOString()}] Erro em verMinhasChaves:`, e.message, e.stack);
       document.querySelector('#modalPix div:nth-child(2)').innerHTML = `<p style="color:red;">${e.message}</p>`;
     }
   });
 }
-async function carregarPixTransacoes() {
-  const token = localStorage.getItem("token");
-  const res = await fetch("/api/transactions/pix", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  const transacoes = await res.json();
 
-  const container = document.getElementById("pixTransacoesContainer");
-  container.innerHTML = ""; // limpa os cards antes
-
-  transacoes.forEach(tx => {
-    // Defina nomes para mostrar
-    const nomeRemetente = tx.nomeRemetente || "Você";
-    const nomeRecebedor = tx.nomeRecebedor || tx.chave || "Desconhecido";
-
-    // Formata a data
-    const dataFormatada = new Date(tx.data).toLocaleString("pt-BR", {
-      dateStyle: "short",
-      timeStyle: "short",
+async function excluirChavePix(id) {
+  try {
+    const token = localStorage.getItem('token');
+    console.log(`[${new Date().toISOString()}] Enviando DELETE para /api/pix/chaves/${id}`);
+    const res = await fetch(`/api/pix/chaves/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
     });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Erro ao excluir chave Pix');
+    console.log(`[${new Date().toISOString()}] Chave Pix excluída:`, id);
+    alert('Chave Pix excluída com sucesso!');
+  } catch (err) {
+    console.error(`[${new Date().toISOString()}] Erro em excluirChavePix:`, err.message, err.stack);
+    alert(`Erro ao excluir chave Pix: ${err.message}`);
+  }
+}
 
-    // Monta o HTML do card
-    const cardHTML = `
-      <div class="cardPix" style="background:#222; color:#fff; padding:15px; border-radius:10px; margin-bottom:10px;">
-        <p><strong>Enviado por:</strong> ${nomeRemetente}</p>
-        <p><strong>Recebido por:</strong> ${nomeRecebedor}</p>
-        <p><strong>Valor:</strong> R$ ${tx.valor.toFixed(2)}</p>
-        <p><strong>Descrição:</strong> ${tx.descricao || "-"}</p>
-        <p><strong>Data:</strong> ${dataFormatada}</p>
-      </div>
-    `;
-    container.insertAdjacentHTML("beforeend", cardHTML);
-  });
+async function carregarPixTransacoes() {
+  try {
+    const token = localStorage.getItem('token');
+    console.log(`[${new Date().toISOString()}] Buscando transações em /api/transactions/pix`);
+    const res = await fetch('/api/transactions/pix', {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const transacoes = await res.json();
+    if (!res.ok) throw new Error(transacoes.error || 'Erro ao buscar transações Pix');
+
+    const container = document.getElementById('pixTransacoesContainer');
+    if (!container) {
+      console.error(`[${new Date().toISOString()}] Elemento #pixTransacoesContainer não encontrado`);
+      return;
+    }
+    container.innerHTML = '';
+
+    transacoes.forEach((tx) => {
+      const nomeRemetente = tx.nomeRemetente || 'Você';
+      const nomeRecebedor = tx.nomeRecebedor || tx.chave || 'Desconhecido';
+      const dataFormatada = new Date(tx.data).toLocaleString('pt-BR', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      });
+
+      const cardHTML = `
+        <div class="cardPix" style="background:#222; color:#fff; padding:15px; border-radius:10px; margin-bottom:10px;">
+          <p><strong>Enviado por:</strong> ${nomeRemetente}</p>
+          <p><strong>Recebido por:</strong> ${nomeRecebedor}</p>
+          <p><strong>Valor:</strong> R$ ${tx.valor.toFixed(2)}</p>
+          <p><strong>Descrição:</strong> ${tx.descricao || '-'}</p>
+          <p><strong>Data:</strong> ${dataFormatada}</p>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', cardHTML);
+    });
+  } catch (err) {
+    console.error(`[${new Date().toISOString()}] Erro em carregarPixTransacoes:`, err.message, err.stack);
+    const container = document.getElementById('pixTransacoesContainer');
+    if (container) {
+      container.innerHTML = '<p>Erro ao carregar transações Pix.</p>';
+    }
+  }
 }
 
 function mostrarCardPix(pixData) {
   const container = document.getElementById('pixResultado');
-  if (!container) return console.error(`[${new Date().toISOString()}] Elemento #pixResultado não encontrado`);
+  if (!container) {
+    console.error(`[${new Date().toISOString()}] Elemento #pixResultado não encontrado`);
+    return;
+  }
 
   container.innerHTML = '';
   const card = document.createElement('div');
@@ -482,7 +541,7 @@ function mostrarCardPix(pixData) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const byId = id => document.getElementById(id);
+  const byId = (id) => document.getElementById(id);
   byId('btnEnviar')?.addEventListener('click', enviarPix);
   byId('btnReceber')?.addEventListener('click', receberPix);
   byId('btnAgendarPix')?.addEventListener('click', agendarPix);
@@ -492,7 +551,6 @@ document.addEventListener('DOMContentLoaded', () => {
   byId('btnMinhasChaves')?.addEventListener('click', verMinhasChaves);
   byId('btnCriarChaves')?.addEventListener('click', cadastrarChavePix);
 
-  // Interceptador para capturar requisições GET indesejadas
   const originalFetch = window.fetch;
   window.fetch = async (...args) => {
     const [url, options] = args;

@@ -6,9 +6,9 @@ const User = require('../models/User');
 
 
 const { registerUser, loginUser, resetSenha } = require('../controllers/userController');
-const { protect } = require('../middleware/authMiddleware'); // Corrigido: agora importando corretamente
-
+const { protect } = require('../middleware/authMiddleware'); 
 const JWT_SECRET = process.env.JWT_SECRET || 'chave_secreta_segura';
+
 
 // Rotas públicas (não exigem autenticação)
 router.post('/login', loginUser);

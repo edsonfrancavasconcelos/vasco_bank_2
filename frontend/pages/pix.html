@@ -3,52 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <title>Pix - VascoBank</title>
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/pix.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<body style="background-color: #121212; color: #ffffff; font-family: 'Segoe UI', sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box;">
+<body class="pix-body">
 
-  <header style="text-align: center; padding: 1.5rem 0;">
-    <img src="img/vb_bank.png" alt="Logo VascoBank" style="margin-bottom: 0.5rem; height: 60px;" />
-    <nav style="margin-top: 1rem;">
-      <a href="index.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Inicio</a>     
-      <a href="createUser.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Cadastro</a>
-      <a href="servicos.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Serviços</a>
-       <a href="login.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Entrar</a>    
-        <a href="dashboard.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Dashboard</a>
+  <!-- Header -->
+  <header class="header">
+    <img src="img/vb_bank.png" alt="Logo VascoBank" class="logo" />
+    <nav class="nav-menu">
+      <a href="index.html">Início</a>     
+      <a href="createUser.html">Cadastro</a>
+      <a href="servicos.html">Serviços</a>
+      <a href="login.html">Entrar</a>    
+      <a href="dashboard.html">Dashboard</a>
     </nav>
   </header>
 
-  <h1 style="color: #ff6600; font-size: 32px; margin-bottom: 20px; text-align: center;">Área Pix</h1>
-  <p style="font-size: 16px; margin-bottom: 30px; text-align: center;"></p>
+  <!-- Conteúdo Pix -->
+  <main class="pix-main">
+    <h1 class="titulo-pagina">Área Pix</h1>
+    <p class="descricao-pix"></p>
 
-  <ul style="list-style: none; padding: 0; max-width: 320px; width: 100%; margin: 0 auto;">
-    <li style="margin-bottom: 12px;">
-      <button type="button" id="btnEnviar" style="width: 100%; padding: 12px 24px; background-color: #ff6600; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Enviar Pix</button>
-    </li>
-    <li style="margin-bottom: 12px;">
-      <button type="button" id="btnReceber" style="width: 100%; padding: 12px 24px; background-color: #ff6600; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Receber Pix</button>
-    </li>
+    <ul class="menu-pix">
+      <li><button class="btn-pix btn-full" id="btnEnviar">Enviar Pix</button></li>
+      <li><button class="btn-pix btn-full" id="btnReceber">Receber Pix</button></li>
+      <li><button class="btn-pix btn-full" id="btnLerQRCode">Ler QR Code</button></li>
+      <li><button class="btn-pix btn-full" id="btnAgendarPix">Agendar Pix</button></li>
+      <li><button class="btn-pix btn-full" id="btnCobrarPix">Cobrar Pix</button></li>
+      <li><button class="btn-pix btn-full" id="btnCopiarColar">Copiar e Colar</button></li>
+      <li><button class="btn-pix btn-full" id="btnMinhasChaves">Minhas Chaves</button></li>
+      <li><button class="btn-pix btn-full" id="btnCriarChaves">Criar Chaves</button></li>
+    </ul>
 
-    </li>
-    <li style="margin-bottom: 12px;">
-      <button type="button" id="btnLerQRCode" style="width: 100%; padding: 12px 24px; background-color: #ff6600; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Ler QR Code</button>
-    </li>
-    <li style="margin-bottom: 12px;">
-      <button type="button" id="btnAgendarPix" style="width: 100%; padding: 12px 24px; background-color: #ff6600; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Agendar Pix</button>
-    </li>
-    <li style="margin-bottom: 12px;">
-      <button type="button" id="btnCobrarPix" style="width: 100%; padding: 12px 24px; background-color: #ff6600; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Cobrar Pix</button>
-    </li>
-    <li style="margin-bottom: 12px;">
-      <button type="button" id="btnCopiarColar" style="width: 100%; padding: 12px 24px; background-color: #ff6600; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Copiar e Colar</button>
-          <li style="margin-bottom: 12px;">
-      <button type="button" id="btnMinhasChaves" style="width: 100%; padding: 12px 24px; background-color: #ff6600; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Minhas Chaves</button>
-          <li style="margin-bottom: 12px;">
-      <button type="button" id="btnCriarChaves" style="width: 100%; padding: 12px 24px; background-color: #ff6600; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;">Criar  Chaves</button>
-    </li>
+    <!-- Lista de Chaves Pix -->
+    <section class="chaves-pix-section">
+      <h2>Minhas Chaves Pix</h2>
+      <ul id="listaChavesPix" class="pix-lista">
+        <!-- As chaves serão renderizadas via JS -->
+      </ul>
+    </section>
+
+    <!-- Resultado Pix -->
+    <div id="pixResultado" class="card-pix"></div>
+    <section class="chaves-pix-section">
+  <h2>Minhas Chaves Pix</h2>
+  <ul id="listaChavesPix" class="pix-lista">
+    <!-- As chaves serão renderizadas via JS -->
   </ul>
-    <div id="pixResultado"></div>
+</section>
+  </main>
 
-  <script type="module" src="./js/pix.js"></script>
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 VascoBank. Todos os direitos reservados.</p>
+    <div class="redes-sociais">
+      <a href="#" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>
+      <a href="#" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+      <a href="#" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#" target="_blank" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+      <a href="#" target="_blank" class="social-icon"><i class="fab fa-threads"></i></a>
+    </div>
+  </footer>
 
+  <script src="./js/pix.js"></script>
 </body>
 </html>

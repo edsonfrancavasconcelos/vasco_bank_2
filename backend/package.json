@@ -1,16 +1,15 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "generateHash.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "hash": "node backend/generateHash.js"
   },
-  "keywords": [],
-  "author": "",
+  "description": "Backend do Vasco Bank",
+  "author": "Edson Vasconcelos",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",

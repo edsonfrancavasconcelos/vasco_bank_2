@@ -3,46 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <title>Login - VascoBank</title>
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body style="font-family: Arial, sans-serif; background-color: #121212; color: #fff; display: flex; flex-direction: column; min-height: 100vh;">
+<body class="login-body">
 
   <!-- Header com navegação -->
-  <header style="text-align: center; padding: 1.5rem 0;">
-    <img src="img/vb_bank.png" alt="Logo VascoBank" style="margin-bottom: 0.5rem; height: 60px;" />
-    <nav style="margin-top: 1rem;">
-      <a href="index.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Inicio</a>     
-      <a href="createUser.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Cadastro</a>
-      <a href="servicos.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Serviços</a>
-       <a href="login.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Entrar</a>    
-        <a href="dashboard.html" style="color: #ff6600; font-size: 1.125rem; font-weight: 500; margin: 0 1rem; text-decoration: none;">Dashboard</a>
+  <header class="header">
+    <img src="img/vb_bank.png" alt="Logo VascoBank" class="logo" />
+    <nav class="nav-menu">
+      <a href="index.html">Início</a>     
+      <a href="createUser.html">Cadastro</a>
+      <a href="servicos.html">Serviços</a>
+      <a href="login.html">Entrar</a>    
+      <a href="dashboard.html">Dashboard</a>
     </nav>
   </header>
 
   <!-- Conteúdo do login centralizado -->
-  <main style="flex-grow: 1; display: flex; align-items: center; justify-content: center;">
-    <div style="background: #1e1e1e; padding: 40px; border-radius: 10px; width: 300px;">
-      <h2 style="text-align: center; color: #ff6600;">VascoBank</h2>
+<main class="login-main">
+  <div class="login-container">
+    <h2 class="login-titulo">VascoBank</h2>
 
-      <input id="email" type="email" placeholder="Email" style="width: 100%; margin-bottom: 10px; padding: 10px; border: none; border-radius: 5px;" />
-      <input id="senha" type="password" placeholder="Senha" style="width: 100%; margin-bottom: 10px; padding: 10px; border: none; border-radius: 5px;" />
+    <!-- Formulário de login -->
+    <form id="loginForm" onsubmit="event.preventDefault(); fazerLogin();">
+      <input id="email" type="email" placeholder="Email" class="login-input" required />
+      <input id="senha" type="password" placeholder="Senha" class="login-input" required />
+      <button type="submit" class="btn-laranja btn-full">Entrar</button>
+    </form>
 
-      <button onclick="fazerLogin()" style="width: 106%; background-color: #ff6600; color: white; padding: 10px; border: none; border-radius: 5px;">Entrar</button>
+    <p class="login-reset-link">
+      <a href="#" onclick="exibirReset()">Esqueceu a senha?</a>
+    </p>
 
-      <p style="margin-top: 15px; text-align: center; font-size: 14px;">
-        <a href="#" onclick="exibirReset()" style="color: #aaa;">Esqueceu a senha?</a>
-      </p>
+    <!-- Formulário de reset -->
+    <form id="resetForm" onsubmit="event.preventDefault(); resetarSenha();" class="login-reset">
+      <input id="resetEmail" type="email" placeholder="Email cadastrado" class="login-input" required />
+      <input id="novaSenha" type="password" placeholder="Nova senha" class="login-input" required />
+      <button type="submit" class="btn-reset btn-full">Resetar Senha</button>
+    </form>
 
-      <div id="reset" style="display: none; margin-top: 20px;">
-        <input id="resetEmail" type="email" placeholder="Email cadastrado" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: none;" />
-        <input id="novaSenha" type="password" placeholder="Nova senha" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: none;" />
-        <button onclick="resetarSenha()" style="width: 106%; background-color: #555; color: white; padding: 10px; border: none; border-radius: 5px;">Resetar Senha</button>
-      </div>
-    </div>
-  </main>
+  </div>
+</main>
+
+  <footer class="footer">
+  <p>© 2025 VascoBank. Todos os direitos reservados.</p>
+  <div class="redes-sociais">
+    <a href="#" target="_blank" class="social-icon "><i class="fab fa-x-twitter"></i> </a>
+    <a href="#" target="_blank" class="social-icon "><i class="fab fa-facebook-f"></i></a>
+    <a href="#" target="_blank" class="social-icon "><i class="fab fa-instagram"></i> </a>
+    <a href="#" target="_blank" class="social-icon "><i class="fab fa-linkedin-in"></i> </a>
+    <a href="#" target="_blank" class="social-icon "><i class="fab fa-pinterest-p"></i> </a>
+    <a href="#" target="_blank" class="social-icon "><i class="fab fa-threads"></i> </a>
+  </div>
+</footer>
 
   <!-- Script externo -->
-  <script type="module" src="./js/login.js"></script>
-
+  <script src="./js/login.js"></script>
 </body>
 </html>

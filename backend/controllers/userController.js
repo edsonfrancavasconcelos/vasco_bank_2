@@ -1,15 +1,25 @@
-const User = require('../models/User');
+require('dotenv').config();
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+
+const User = require('../models/User');
 const gerarNumeroContaUnico = require('../utils/gerarNumeroConta');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'chave_secreta_segura';
 
 // === LOGIN ===
-const loginUser = async (req, res) => {
+const loginUser = async (req, res) => { 
+  console.log('[LOGIN] Dados recebidos:', req.body);
+  console.log('Estado da conexão mongoose:', mongoose.connection.readyState);
   try {
     const { email, senha } = req.body;
     console.log('[LOGIN] Dados recebidos:', { email, senha });
+
+    if (!email || !senha) {
+      console.warn('[LOGIN] Campos obrigatórios ausentes');
+      return res.status(400).json({ message: 'Email e senha são obrigatórios' });
+    }
 
     const user = await User.findOne({ email });
     if (!user) {
@@ -41,7 +51,7 @@ const loginUser = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('[LOGIN] Erro inesperado:', error.message);
+    console.error('[LOGIN] Erro inesperado:', error.message, error.stack);
     res.status(500).json({ message: 'Erro ao fazer login' });
   }
 };
@@ -74,22 +84,19 @@ const registerUser = async (req, res) => {
     const numeroConta = await gerarNumeroContaUnico();
     console.log('[REGISTRO] Número de conta gerado:', numeroConta);
 
-   const senhaOriginal = senha.trim();
-
-const novoUsuario = new User({
-  nome: nome.trim(),
-  email: normalizedEmail,
-  cpf: cpf.trim(),
-  telefone: telefone.trim(),
-  endereco: endereco.trim(),
-  senha: senhaOriginal, // O hash será feito pelo pre('save')
-  numeroConta,
-  saldo: 0,
-  fatura: 0,
-  historicoFatura: [],
-  historicoSaldo: [],
-});
-
+    const novoUsuario = new User({
+      nome: nome.trim(),
+      email: normalizedEmail,
+      cpf: cpf.trim(),
+      telefone: telefone.trim(),
+      endereco: endereco.trim(),
+      senha: senhaCriptografada, // Corrigido: usar o hash
+      numeroConta,
+      saldo: 0,
+      fatura: 0,
+      historicoFatura: [],
+      historicoSaldo: [],
+    });
 
     await novoUsuario.save();
     console.log('[REGISTRO] Usuário criado:', { id: novoUsuario._id, email: novoUsuario.email });
@@ -99,7 +106,7 @@ const novoUsuario = new User({
       numeroConta: novoUsuario.numeroConta,
     });
   } catch (error) {
-    console.error('[REGISTRO] Erro inesperado:', error.message);
+    console.error('[REGISTRO] Erro inesperado:', error.message, error.stack);
     res.status(500).json({ error: 'Erro ao registrar usuário.' });
   }
 };
@@ -132,7 +139,7 @@ const resetSenha = async (req, res) => {
 
     res.status(200).json({ message: `Senha resetada para '${novaSenha}'. Use-a para logar.` });
   } catch (error) {
-    console.error('[RESET] Erro inesperado:', error.message);
+    console.error('[RESET] Erro inesperado:', error.message, error.stack);
     res.status(500).json({ error: 'Erro interno no servidor.' });
   }
 };
