@@ -1,0 +1,93 @@
+<!-- Modal genérico -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span id="modalClose" class="modal-close">&times;</span>
+    <h2 id="modalTitle"></h2>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Modal Pagamento Dinâmico -->
+<div id="modalPagamento" class="modal overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Escolha a forma de pagamento</h2>
+      <button id="modalPagamentoClose" class="btn laranja">Fechar</button>
+    </div>
+
+    <!-- Abas -->
+    <div class="tabs">
+      <div class="tab active" data-tab="pix">PIX</div>
+      <div class="tab" data-tab="conta">Conta / Saque</div>
+      <div class="tab" data-tab="credito">Crédito</div>
+      <div class="tab" data-tab="boleto">Boleto</div>
+    </div>
+
+    <!-- Conteúdos das abas -->
+    <div class="tab-contents">
+      <!-- PIX -->
+      <div class="tab-content" data-content="pix">
+        <div class="field">
+          <label>Valor:</label>
+          <input type="number" id="pixValor" class="value"/>
+        </div>
+        <div class="field">
+          <label>Payload / Código:</label>
+          <div id="pixPayload" class="value">...</div>
+          <div class="btn-group">
+            <button id="btnPixGerar" class="btn laranja">Gerar</button>
+            <button id="btnPixCopiar" class="btn laranja">Copiar</button>
+            <button id="btnPixColar" class="btn laranja">Colar</button>
+          </div>
+        </div>
+        <div id="pixQrArea">
+          <img id="pixQrImage" src="" alt="QR Pix">
+          <div class="qr-note">Escaneie com o app do banco</div>
+        </div>
+        <div class="modal-footer">
+          <button id="btnPixPDF" class="btn laranja">Gerar PDF</button>
+          <button id="btnPixConfirm" class="btn laranja">Confirmar pagamento</button>
+        </div>
+      </div>
+
+      <!-- CONTA -->
+      <div class="tab-content" data-content="conta">
+        <div class="field"><label>Conta:</label><div class="value" id="contaInfo">...</div></div>
+        <div class="field"><label>Valor:</label><input type="number" id="contaValor" class="value"/></div>
+        <div class="field"><label>Observação:</label><input type="text" id="contaObs" class="value" placeholder="Ex: pagamento fatura"/></div>
+        <div class="btn-group">
+          <button id="btnContaCopiar" class="btn laranja">Copiar</button>
+          <button id="btnContaColar" class="btn laranja">Colar</button>
+        </div>
+        <div class="modal-footer">
+          <button id="btnContaPDF" class="btn laranja">Gerar PDF</button>
+          <button id="btnContaConfirm" class="btn laranja">Confirmar</button>
+        </div>
+      </div>
+
+      <!-- CRÉDITO -->
+      <div class="tab-content" data-content="credito">
+        <div class="field"><label>Nome:</label><input id="credNome" class="value" type="text" placeholder="Titular"/></div>
+        <div class="field"><label>Nº do Cartão:</label><input id="credNum" class="value" type="text" placeholder="0000 0000 0000 0000"/></div>
+        <div class="field"><label>CVV:</label><input id="credCVV" class="value" type="text" placeholder="123"/></div>
+        <div class="field"><label>Validade:</label><input id="credValidade" class="value" type="text" placeholder="MM/AA"/></div>
+        <div class="modal-footer">
+          <button id="btnCreditoConfirm" class="btn laranja">Confirmar</button>
+        </div>
+      </div>
+
+      <!-- BOLETO -->
+      <div class="tab-content" data-content="boleto">
+        <div class="field"><label>Valor:</label><input type="number" id="boletoValor" class="value"/></div>
+        <div class="field"><label>Vencimento:</label><input type="date" id="boletoVenc" class="value"/></div>
+        <div class="modal-footer">
+          <button id="btnBoletoPDF" class="btn laranja">Gerar PDF</button>
+          <button id="btnBoletoConfirm" class="btn laranja">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Área dinâmica para modais extras -->
+<div id="areaPagamentoDinamico" class="area-dinamica"></div>

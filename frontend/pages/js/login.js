@@ -1,75 +1,123 @@
-// js/login.js
+console.log('Iniciando login.js');
 
-// Função para fazer o login
-async function fazerLogin() {
-  const email = document.getElementById('email').value.trim();
-  const senha = document.getElementById('senha').value.trim();
+export function initLoginPage() {
+  console.log('Inicializando página de login');
 
-  if (!email || !senha) {
-    alert('Por favor, preencha email e senha.');
-    return;
-  }
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  try {
-    const res = await fetch('http://localhost:3000/api/user/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, senha }),
+  // Função que inicializa os eventos
+  function init() {
+    console.log('DOM carregado');
+
+    const loginForm = document.getElementById('loginForm');
+    const resetForm = document.getElementById('resetForm');
+    const resetLink = document.getElementById('resetLink');
+
+    if (!loginForm || !resetForm || !resetLink) {
+      console.warn('Página atual não é de login, ignorando login.js');
+      return;
+    }
+
+    // === RESET LINK ===
+    resetLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginForm.style.display = 'none';
+      resetForm.style.display = 'block';
+      console.log('Exibindo formulário de reset');
     });
 
-    const data = await res.json();
+    // === LOGIN ===
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      console.log('Evento de submit disparado no loginForm');
 
-    if (res.ok) {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('userData', JSON.stringify(data.user));
-      alert('Login realizado com sucesso!');
-      window.location.href = '/dashboard.html';
-    } else {
-      alert(data.message || 'Erro no login');
-    }
-  } catch (error) {
-    console.error('Erro ao fazer login:', error);
-    alert('Erro na conexão. Tente novamente mais tarde.');
+      const email = document.getElementById('email').value.trim();
+      const senha = document.getElementById('senha').value;
+
+      if (!email || !senha) {
+        alert('Email e senha são obrigatórios.');
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        alert('Por favor, insira um email válido.');
+        return;
+      }
+
+      try {
+        console.log('Enviando login para o servidor...');
+        const response = await fetch('http://localhost:3000/api/user/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, senha }),
+        });
+
+        const data = await response.json();
+        console.log('Resposta do login:', data);
+
+        if (response.ok && data.token) {
+          localStorage.setItem('token', data.token);
+          console.log('Token salvo no localStorage:', data.token);
+          window.location.href = 'dashboard.html';
+        } else {
+          alert(`Erro: ${data.message || 'Credenciais inválidas'}`);
+        }
+      } catch (error) {
+        console.error('Erro ao logar:', error);
+        alert('Não foi possível conectar ao servidor. Verifique se o backend está ativo na porta 3000.');
+      }
+    });
+
+    // === RESET DE SENHA ===
+    resetForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      console.log('Evento de submit disparado no resetForm');
+
+      const email = document.getElementById('resetEmail').value.trim();
+      const novaSenha = document.getElementById('novaSenha').value;
+
+      if (!email || !novaSenha) {
+        alert('Email e nova senha são obrigatórios.');
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        alert('Por favor, insira um email válido.');
+        return;
+      }
+
+      try {
+        console.log('Enviando reset para o servidor...');
+        const response = await fetch('http://localhost:3000/api/user/reset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, novaSenha }),
+        });
+
+        const data = await response.json();
+        console.log('Resposta do reset:', data);
+
+        if (response.ok) {
+          alert('Senha redefinida com sucesso! Faça login com a nova senha.');
+          resetForm.style.display = 'none';
+          loginForm.style.display = 'block';
+        } else {
+          alert(`Erro: ${data.message || 'Erro ao redefinir senha.'}`);
+        }
+      } catch (error) {
+        console.error('Erro ao redefinir senha:', error);
+        alert('Não foi possível conectar ao servidor. Verifique se o backend está ativo na porta 3000.');
+      }
+    });
   }
-}
 
-// Função para mostrar/esconder o formulário de resetar senha
-function exibirReset() {
-  const resetForm = document.getElementById('reset');
-  if (resetForm) {
-    resetForm.style.display = resetForm.style.display === 'block' ? 'none' : 'block';
+  // ⚡ Executa init() imediatamente se o DOM já estiver carregado
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    console.warn('Elemento #reset não encontrado no DOM.');
+    init();
   }
 }
 
-// Função para resetar a senha
-async function resetarSenha() {
-  const email = document.getElementById('resetEmail').value.trim();
-  const novaSenha = document.getElementById('novaSenha').value.trim();
-
-  if (!email || !novaSenha) {
-    alert('Por favor, preencha email e nova senha.');
-    return;
-  }
-
-  try {
-    const res = await fetch('http://localhost:3000/api/user/reset', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, novaSenha }),
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      alert('Senha atualizada com sucesso! Use a nova senha para logar.');
-      document.getElementById('reset').style.display = 'none';
-    } else {
-      alert(data.message || 'Erro ao resetar senha');
-    }
-  } catch (error) {
-    console.error('Erro ao resetar senha:', error);
-    alert('Erro na conexão. Tente novamente mais tarde.');
-  }
-}
+// ⚡ Chama a função principal
+initLoginPage();

@@ -1,81 +1,175 @@
-/* Main container */
-.main-servicos {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background-color: var(--cinza-900);
-  border-radius: var(--border-radius);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.6);
+/* =========================================================
+   SERVICOS.CSS - Página Serviços VascoBank
+   ========================================================= */
+
+/* ------------------ Body ------------------ */
+body.body-servicos {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #121212;
+  color: #ff6600;
+  margin: 0;
+  padding-top: 120px; /* espaço para header fixo */
+  min-height: 100vh;
+}
+
+/* ------------------ Header ------------------ */
+.header {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #1a1a1a;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  z-index: 1000;
+}
+
+.logo {
+  height: 80px;
+}
+
+.menu-toggle {
+  display: none;
+  font-size: 28px;
+  background: none;
+  border: none;
+  color: #ff6600;
+  cursor: pointer;
+}
+.menu-toggle:hover { color: #b34700; }
+
+.nav-main {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.nav-main a {
+  color: #ff6600;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: background 0.3s, color 0.3s;
+}
+.nav-main a:hover {
+  color: #fff;
+  background-color: #222;
+}
+
+/* ------------------ Conteúdo ------------------ */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #ff6600;
   text-align: center;
 }
 
-/* Título da página */
-.titulo-pagina {
-  color: var(--laranja-500);
-  font-size: 2rem;
-  margin-bottom: 2rem;
-}
-
-/* Lista de serviços */
-.lista-servicos {
-  list-style-type: none;
+/* ------------------ Lista de Serviços ------------------ */
+.servicos-lista {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
   padding: 0;
+  margin: 0;
 }
 
-.lista-servicos .servico a {
-  display: block;
-  text-decoration: none;
-  color: var(--branco);
-  padding: 15px 20px;
-  margin: 7px;
-  background-color: #1e1e1e;
-  border-left: 4px solid var(--laranja-500);
-  border-radius: var(--border-radius);
-  transition: transform 0.2s ease, background 0.3s ease;
+.servicos-lista li {
+  background-color: #1a1a1a;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.lista-servicos .servico a:hover {
-  transform: translateY(-2px);
-  background-color: #2a2a2a;
-  color: var(--laranja-500);
-
+.servicos-lista li:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.6);
 }
 
-
-
-/* Navegação */
-.nav-main a {
-  color: var(--laranja-500);
-  margin: 0 1rem;
-  font-weight: 500;
-  font-size: 1.1rem;
-  text-decoration: none;
+.servicos-lista li h2 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #ff6600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.nav-main a:hover {
-  color: var(--laranja-700);
-}
-img{
-   margin-bottom: 1rem;
-    height: 90px; 
-}
-/* Telas médias (tablets) */
-@media (max-width: 992px) {
-  .home-main {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  }
-  .home-card {
-    max-width: 400px;
-  }
+.servicos-lista li p {
+  font-size: 0.95rem;
+  color: #ddd;
 }
 
-/* Telas pequenas (celulares) */
+/* ------------------ Footer ------------------ */
+.footer {
+  position: fixed;
+  bottom: 0; left: 0;
+  width: 100%;
+  padding: 1rem 0;
+  background: #121212;
+  color: #ff6600;
+  text-align: center;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
+  z-index: 1000;
+}
+
+.redes-sociais {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+.social-icon {
+  color: #ff6600;
+  font-size: 18px;
+  transition: color 0.3s;
+}
+.social-icon:hover { color: #b34700; }
+
+/* ------------------ Responsividade ------------------ */
 @media (max-width: 768px) {
-  .home-main {
-    grid-template-columns: 1fr; /* 1 card por linha */
+  .menu-toggle { display: block; }
+
+  .nav-main {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    width: 200px;
+    background-color: #222;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
   }
-  .home-card {
-    max-width: 100%;
-    padding: 1rem;
+  .nav-main.show {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
   }
+
+  .servicos-lista {
+    grid-template-columns: 1fr;
+    padding: 0 10px;
+  }
+  h1 { font-size: 1.5rem; }
+  .servicos-lista li h2 { font-size: 1rem; }
+  .servicos-lista li p { font-size: 0.85rem; }
 }

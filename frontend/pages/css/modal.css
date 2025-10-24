@@ -1,0 +1,85 @@
+/* Estilo do Modal */
+.historico-modal {
+  background: #1e1e2f;
+  border-radius: 16px;
+  border: none;
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+.historico-modal .modal-header {
+  border-bottom: none;
+  padding: 20px;
+  background: linear-gradient(135deg, #ff6a00, #ee0979);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.historico-modal .modal-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.historico-body {
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Card de cada transação */
+.transacao-card {
+  background: #2a2a40;
+  border-radius: 12px;
+  padding: 15px 20px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.transacao-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.transacao-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.transacao-data {
+  font-size: 0.85rem;
+  color: #bbb;
+}
+
+.transacao-tipo {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ff9a56;
+}
+
+/* Botão detalhes */
+.btn-detalhes {
+  background: linear-gradient(135deg, #ff6a00, #ee0979);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-detalhes:hover {
+  background: linear-gradient(135deg, #ee0979, #ff6a00);
+}
+
+/* Nenhum crédito */
+.no-credit {
+  text-align: center;
+  margin-top: 15px;
+  color: #ccc;
+  font-style: italic;
+}

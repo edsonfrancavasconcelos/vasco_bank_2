@@ -5,75 +5,144 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VascoBank</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="css/index.css">
-  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/index.css" />
+  <link rel="stylesheet" href="css/theme.css" />
 </head>
 
-<body class="home-body">
-  <header class="header">
-    <img src="img/vb_bank.png" alt="Logo VascoBank" class="logo" />
-    <nav class="nav-menu">
-      <a href="index.html">Início</a>     
-      <a href="createUser.html">Cadastro</a>
-      <a href="servicos.html">Serviços</a>
-      <a href="login.html">Entrar</a>    
-      <a href="dashboard.html">Dashboard</a>
-    </nav>
-  </header>
+<body class="body">
 
-  <main class="home-main container">
-    <div class="home-card" onclick="location.href='/login.html'">
-      <h2>Login</h2>
+<header class="header">
+  <img src="img/vb_bank.png" alt="Logo VascoBank" class="logo" />
+  <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+    <i class="fas fa-bars"></i>
+  </button>
+  <nav class="nav-main" id="navMenu">
+    <a href="index.html"><i class="fas fa-home"></i> Início</a>
+    <a href="createUser.html"><i class="fas fa-user-plus"></i> Cadastro</a>
+    <a href="servicos.html"><i class="fas fa-concierge-bell"></i> Serviços</a>
+    <a href="seguros.html"><i class="fa-solid fa-shield-halved"></i> Seguros</a>
+    <a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+    <a href="transacoes.html"><i class="fas fa-exchange-alt"></i> Transações</a>
+    <a href="pix.html"><i class="fas fa-qrcode"></i> Pix</a>
+    <a href="cartoes.html"><i class="fas fa-credit-card"></i> Cartões</a>
+    <a href="produtos.html"><i class="fas fa-box"></i> Produtos</a>
+    <a href="emprestimos.html"><i class="fas fa-hand-holding-usd"></i> Empréstimos</a>
+    <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+  </nav>
+</header>
+
+<main class="home-main container">
+  <div class="home-card" data-link="login.html">
+    <img src="img/login.jpeg" alt="Login VascoBank" />
+    <div class="home-card-content">
+      <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
       <p>Entre na sua conta VascoBank</p>
     </div>
+  </div>
 
-    <div class="home-card" onclick="location.href='/pix.html'">
-      <h2>Pix</h2>
-      <p>Gerencie suas chaves e pagamentos Pix</p>
-    </div>
-
-    <div class="home-card" onclick="location.href='/transaction.html'">
-      <h2>Transações</h2>
+  <div class="home-card" data-link="transacoes.html">
+    <img src="img/transacoes.jpeg" alt="Transações VascoBank" />
+    <div class="home-card-content">
+      <h2><i class="fas fa-exchange-alt"></i> Transações</h2>
       <p>Aqui é sua área de Transações</p>
     </div>
+  </div>
 
-    <div class="home-card" onclick="location.href='cardArea.html'">
-      <h2>Cartões</h2>
+  <div class="home-card" data-link="pix.html">
+    <img src="img/pix.jpg" alt="Pix VascoBank" />
+    <div class="home-card-content">
+      <h2><i class="fas fa-qrcode"></i> Pix</h2>
+      <p>Envie, receba e gerencie seus Pix</p>
+    </div>
+  </div>
+
+  <div class="home-card" data-link="cartoes.html">
+    <img src="img/cartoes.jpeg" alt="Cartões VascoBank" />
+    <div class="home-card-content">
+      <h2><i class="fas fa-credit-card"></i> Cartões</h2>
       <p>Gerencie seus Cartões</p>
     </div>
+  </div>
 
-    <div class="home-card" onclick="location.href='/produtos.html'">
-      <h2>Produtos</h2>
+  <div class="home-card" data-link="produtos.html">
+    <img src="img/produtos.jpeg" alt="Produtos VascoBank" />
+    <div class="home-card-content">
+      <h2><i class="fas fa-store"></i> Produtos</h2>
       <p>Confira nossos produtos bancários</p>
     </div>
+  </div>
 
-    <div class="home-card" onclick="location.href='/servicos.html'">
-      <h2>Serviços</h2>
+  <div class="home-card" data-link="servicos.html">
+    <img src="img/servicos.jpeg" alt="Serviços VascoBank" />
+    <div class="home-card-content">
+      <h2><i class="fas fa-cogs"></i> Serviços</h2>
       <p>Conheça nossos serviços exclusivos</p>
     </div>
+  </div>
 
-    <div class="home-card" onclick="location.href='/servicos.html'">
-      <h2>Empréstimos</h2>
-      <p>Conheça nossos serviços exclusivos</p>
+  <div class="home-card" data-link="emprestimos.html">
+    <img src="img/emprestimos.jpeg" alt="Empréstimos VascoBank" />
+    <div class="home-card-content">
+      <h2><i class="fas fa-hand-holding-usd"></i> Empréstimos</h2>
+      <p>Conheça nossas opções de Empréstimos</p>
     </div>
+  </div>
 
-    <div class="home-card" onclick="location.href='/servicos.html'">
-      <h2>Seguros</h2>
-      <p>Conheça nossos serviços exclusivos</p>
+  <div class="home-card" data-link="seguros.html">
+    <img src="img/seguros.jpg" alt="Seguros VascoBank" />
+    <div class="home-card-content">
+      <h2><i class="fas fa-shield-alt"></i> Seguros</h2>
+      <p>Conheça nossos Seguros exclusivos</p>
     </div>
-  </main>
-  <footer class="footer">
+  </div>
+</main>
+
+<footer class="footer">
   <p>© 2025 VascoBank. Todos os direitos reservados.</p>
   <div class="redes-sociais">
-    <a href="#" target="_blank" class="social-icon "><i class="fab fa-x-twitter"></i> </a>
-    <a href="#" target="_blank" class="social-icon "><i class="fab fa-facebook-f"></i></a>
-    <a href="#" target="_blank" class="social-icon "><i class="fab fa-instagram"></i> </a>
-    <a href="#" target="_blank" class="social-icon "><i class="fab fa-linkedin-in"></i> </a>
-    <a href="#" target="_blank" class="social-icon "><i class="fab fa-pinterest-p"></i> </a>
-    <a href="#" target="_blank" class="social-icon "><i class="fab fa-threads"></i> </a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
   </div>
 </footer>
-  <script type="module" src=""></script>
- 
+
+<script type="module" src="js/index.js" ></script>
+<script type="module" src="js/main.js" ></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Menu responsivo
+    const menuToggle = document.getElementById("menuToggle");
+    const navMenu = document.getElementById("navMenu");
+    if (menuToggle && navMenu) {
+      menuToggle.addEventListener("click", () => navMenu.classList.toggle("show"));
+    }
+
+    // Cards clicáveis
+    document.querySelectorAll(".home-card").forEach(card => {
+      card.addEventListener("click", () => {
+        const link = card.getAttribute("data-link");
+        if (link) window.location.href = link;
+      });
+    });
+
+    // 🔒 Manter usuário logado sem papo complicado
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    if (token && user) {
+      const welcome = document.createElement("p");
+      welcome.textContent = `Olá, ${user.nome}! Você está logado.`;
+      welcome.style.color = "#fff";
+      welcome.style.textAlign = "center";
+      welcome.style.margin = "10px 0";
+      document.body.prepend(welcome);
+    }
+  });
+</script>
+
 </body>
 </html>

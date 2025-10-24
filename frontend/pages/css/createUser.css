@@ -1,135 +1,143 @@
-/* createUser.css */
-
-/* Corpo da página */
-body {
-  background-color: #121212;
-  color: white;
-  font-family: sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  padding: 20px;
-}
-
-/* Header */
-header {
-  text-align: center;
-  padding: 1.5rem 0;
-}
-
-header img.logo {
-  margin-bottom: 0.5rem;
-  height: 60px;
-}
-
-header nav {
-  margin-top: 1rem;
-}
-
-header nav a {
-  color: #ff6600;
-  font-size: 1.125rem;
-  font-weight: 500;
-  margin: 0 1rem;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-header nav a:hover {
-  color: #b34700;
-}
-
-/* Conteúdo central */
+/* ---------- Main ---------- */
 main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
-
-h1 {
-  color: #ff6600;
-  margin-bottom: 20px;
-}
-
-/* Formulário */
-form#createUserForm {
-  background-color: #1e1e1e;
+  max-width: 800px; /* antes 480px, agora mais largo */
+  width: 90%;       /* ocupa 90% da tela */
+  margin: 30px auto;
   padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(255,102,0,0.5);
-  width: 100%;
-  max-width: 400px;
+  background-color: var(--cinza-800);
+  border-radius: var(--border-radius);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* opcional, deixa mais destacado */
+}
+
+/* ---------- Título ---------- */
+main h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem; /* maior que antes */
+}
+
+/* ---------- Formulário ---------- */
+form#createUserForm {
   display: flex;
   flex-direction: column;
+  gap: 20px; /* mais espaçamento */
 }
 
 form#createUserForm label {
-  margin-bottom: 6px;
+  font-weight: 500;
 }
 
-form#createUserForm input {
-  margin-bottom: 15px;
-  padding: 10px;
-  border-radius: 4px;
-  border: none;
-  background-color: #2c2c2c;
-  color: white;
-}
-
-form#createUserForm input#confirmarSenha,
-form#createUserForm input#senha {
-  margin-bottom: 20px;
-}
-
-/* Botões */
-form#createUserForm button {
+form#createUserForm input[type="text"],
+form#createUserForm input[type="email"],
+form#createUserForm input[type="password"] {
   padding: 12px;
-  font-weight: bold;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--cinza-900);
+  background-color: var(--cinza-900);
+  color: var(--laranja-500);
+  font-size: 18px; /* inputs maiores */
+}
+
+form#createUserForm button {
+  background-color: var(--laranja-500);
+  color: var(--branco);
   border: none;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
+  padding: 14px;
+  font-size: 18px;
   cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
-form#createUserForm button[type="submit"] {
-  background-color: #ff6600;
-  color: white;
-  margin-bottom: 10px;
+form#createUserForm button:hover {
+  background-color: var(--laranja-700);
+  transform: translateY(-2px);
 }
 
-form#createUserForm button[type="submit"]:hover {
-  background-color: #b34700;
-}
-
+/* Botões secundários (Voltar e Faça Login) */
 form#createUserForm button[type="button"] {
-  background-color: #555;
-  color: white;
-  margin-top: 10px;
+  background-color: var(--cinza-900);
+  color: var(--laranja-500);
 }
 
 form#createUserForm button[type="button"]:hover {
-  background-color: #333;
+  background-color: var(--cinza-800);
+  color: var(--laranja-700);
+}
+.sucesso-card {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 12px;
+  background: #1e1e1e;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.3);
 }
 
-/* Responsividade */
-@media (max-width: 500px) {
-  header nav a {
-    margin: 0 0.5rem;
-    font-size: 1rem;
-  }
+.sucesso-header {
+  margin-bottom: 15px;
+}
 
-  form#createUserForm {
+.sucesso-header i {
+  font-size: 48px;
+  color: #4caf50;
+}
+
+.sucesso-body p {
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+.btn-concluir {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #ff6600;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-concluir:hover {
+  background: #e65c00;
+}
+
+
+/* ---------- Responsividade ---------- */
+@media (max-width: 768px) {
+  main {
+    width: 95%;
     padding: 20px;
   }
 
-  form#createUserForm input {
-    padding: 8px;
+  form#createUserForm input[type="text"],
+  form#createUserForm input[type="email"],
+  form#createUserForm input[type="password"] {
+    font-size: 16px;
+  }
+
+  form#createUserForm button {
+    font-size: 16px;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  main {
+    padding: 15px;
+    margin: 10px;
+  }
+
+  form#createUserForm input[type="text"],
+  form#createUserForm input[type="email"],
+  form#createUserForm input[type="password"] {
+    font-size: 14px;
   }
 
   form#createUserForm button {

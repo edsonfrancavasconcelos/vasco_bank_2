@@ -1,0 +1,79 @@
+/* Cada item de transação */
+.history-card li {
+  display: flex;
+  flex-direction: column; /* mantém detalhes abaixo */
+  background: #26262a;
+  padding: 12px 15px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  color: #fff; /* texto padrão branco */
+  font-size: 0.95rem;
+}
+#btnHistorico {
+  background: #ff6600;   /* mesma cor do botão de detalhes */
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#btnHistorico:hover {
+  background: #e65c00;  /* mesmo efeito hover do botão de detalhes */
+}
+
+/* Linha principal (data, tipo, botão detalhes) */
+.titulo {
+  display: flex;
+  color: #fff; /* branco */
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Data */
+.titulo span.data {
+  color: #ff8800; /* branco */
+  font-weight: 500;
+}
+
+/* Tipo */
+.titulo span.tipo {
+  color: #fff; /* branco */
+  margin-left: 10px;
+  text-transform: capitalize;
+}
+
+/* Valor */
+.titulo span.valor {
+  color: #ff8800; /* laranja */
+  font-weight: 600;
+  margin-left: 10px;
+}
+
+/* Botão detalhes */
+.toggleDetalhes {
+  background: #ff6600;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.toggleDetalhes:hover {
+  background: #e65c00;
+}
+
+/* Detalhes extras (forma, etc) */
+.detalhes {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color:#ff8800;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}

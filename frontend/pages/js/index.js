@@ -1,88 +1,40 @@
+// frontend/pages/js/index.js
+import { atualizarSaldo } from './saldo.js';
+import { carregarHistorico } from './historico.js';
+import { initTransacoes } from './transacoes.js';
+import { abrirFormularioPix } from './forms.js';
+
 document.addEventListener('DOMContentLoaded', () => {
-  const modal = document.getElementById('loginModal');
-  const loginBtn = document.getElementById('card-login');
-  const closeBtn = document.getElementById('loginCloseBtn');
-  const loginForm = document.getElementById('loginForm');
+  const bodyClass = document.body.className;
 
-  // Caso use Bootstrap 5 Modal, crie a instância:
-  let bootstrapModal;
-  if (modal && typeof bootstrap !== 'undefined') {
-    bootstrapModal = new bootstrap.Modal(modal);
-  }
-
-  if (loginBtn) {
-    loginBtn.addEventListener('click', () => {
-      if (bootstrapModal) {
-        bootstrapModal.show();
-      } else if (modal) {
-        modal.style.display = 'block';
-      }
+  if (bodyClass.includes('dashboard')) {
+    // Somente no dashboard
+    import('./dashboard.js').then(module => {
+      module.initDashboard().catch(err => {
+        console.error("Erro ao iniciar dashboard:", err);
+        localStorage.removeItem('token');
+        alert("Não foi possível carregar o dashboard. Faça login novamente.");
+        window.location.href = "login.html";
+      });
     });
   }
 
-  if (closeBtn) {
-    closeBtn.addEventListener('click', () => {
-      if (bootstrapModal) {
-        bootstrapModal.hide();
-      } else if (modal) {
-        modal.style.display = 'none';
-      }
-    });
-  }
+  // Inicializações comuns (funcionam em todas as páginas)
+  atualizarSaldo();
+  carregarHistorico();
+  initTransacoes();
 
-  // Fechar modal clicando fora do conteúdo (background)
-  if (window && modal) {
-    window.addEventListener('click', (event) => {
-      if (event.target === modal) {
-        if (bootstrapModal) {
-          bootstrapModal.hide();
-        } else {
-          modal.style.display = 'none';
-        }
-      }
-    });
-  }
+  // Mapear botões de Pix para seus formulários
+  const btnMap = {
+    btnPixEnviar: "enviar",
+    btnPixCobrar: "cobrar",
+    btnPixAgendar: "agendar",
+    btnPixCriarChave: "criarChave",
+    btnPixVerChaves: "verChaves"
+  };
 
-  // Ações dos cards Pix, Produtos e Serviços
-  const cardPix = document.getElementById('card-pix');
-  if (cardPix) {
-    cardPix.addEventListener('click', () => {
-      alert('Funcionalidade Pix em desenvolvimento!');
-    });
-  }
-
-  const cardProdutos = document.getElementById('card-produtos');
-  if (cardProdutos) {
-    cardProdutos.addEventListener('click', () => {
-      alert('Aqui você verá nossos produtos!');
-    });
-  }
-
-  const cardServicos = document.getElementById('card-servicos');
-  if (cardServicos) {
-    cardServicos.addEventListener('click', () => {
-      alert('Conheça nossos serviços!');
-    });
-  }
-
-  // Submissão do formulário de login
-  if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const email = e.target.email.value.trim();
-      const password = e.target.password.value.trim();
-
-      if (email && password) {
-        alert(`Tentativa de login com email: ${email}`);
-        if (bootstrapModal) {
-          bootstrapModal.hide();
-        } else if (modal) {
-          modal.style.display = 'none';
-        }
-        e.target.reset();
-      } else {
-        alert('Preencha email e senha');
-      }
-    });
-  }
+  Object.entries(btnMap).forEach(([btnId, tipo]) => {
+    const btn = document.getElementById(btnId);
+    if (btn) btn.addEventListener("click", () => abrirFormularioPix(tipo));
+  });
 });

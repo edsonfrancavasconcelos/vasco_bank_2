@@ -1,0 +1,153 @@
+/* ==========================
+   VARIÁVEIS
+========================== */
+:root {
+  --cor-primaria: #ff6b00; /* Laranja VascoBank */
+  --cor-secundaria: #1a1a1a; /* Fundo escuro do card */
+  --cor-fundo: #121212;      /* Fundo da página */
+  --cor-texto: #ffffff;
+  --cor-texto-secundario: #cccccc;
+  --cor-borda: #333333;
+  --font-principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ==========================
+   RESET E BODY
+========================== */
+
+.header .logo {
+  height: 100px;
+}
+
+.emprestimos-main {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.titulo-pagina {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.descricao {
+  font-size: 1rem;
+  color: var(--cor-texto-secundario);
+  margin-bottom: 30px;
+}
+
+/* ==========================
+   LISTA DE EMPRÉSTIMOS
+========================== */
+.lista-emprestimos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.emprestimo {
+  background-color: var(--cor-secundaria);
+  padding: 20px;
+  border-radius: 15px;
+  width: 280px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.emprestimo:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+}
+
+.emprestimo h2 {
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+}
+
+.emprestimo p {
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+  color: var(--cor-texto-secundario);
+}
+
+/* BOTÕES */
+.btn-laranja {
+  background-color: var(--cor-primaria);
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.btn-laranja:hover {
+  background-color: #e65a00;
+  transform: scale(1.05);
+}
+
+.btn-full {
+  width: 100%;
+}
+/* ------------------ Card de Simulação ------------------ */
+.simulador-card {
+  background-color: var(--cinza-900);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  margin-top: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  width: 100%; /* ocupa a largura do card */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ------------------ Card de Simulação ------------------ */
+.simulador-card {
+  background-color: var(--cinza-900);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  margin-top: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  width: 100%; /* ocupa a largura do card */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.simulador-card input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--cinza-800);
+  background-color: var(--cinza-800);
+  color: var(--laranja-500);
+}
+
+.simulador-card button.btn-fechar {
+  align-self: flex-end;
+}
+
+@media(max-width: 768px) {
+  .lista-emprestimos {
+    flex-direction: column;
+    align-items: center;
+  }
+  .simulador-card {
+    max-width: 280px; /* não exagera na largura */
+  }
+}

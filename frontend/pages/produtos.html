@@ -1,70 +1,101 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Serviços - VascoBank</title>
-  <link rel="stylesheet" href="css/theme.css">
-  <link rel="stylesheet" href="css/produtos.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produtos - VascoBank</title>
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/produtos.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<body>
+<body class="body">
 
-  <!-- Header -->
-  <header class="header">
-    <img src="img/vb_bank.png" alt="Logo VascoBank" class="logo" />
-    <nav class="nav-menu">
-      <a href="index.html">Início</a>     
-      <a href="createUser.html">Cadastro</a>
-      <a href="servicos.html">Serviços</a>
-      <a href="login.html">Entrar</a>    
-      <a href="dashboard.html">Dashboard</a>
-    </nav>
-  </header>
+<header class="header">
+  <img src="img/vb_bank.png" alt="Logo VascoBank" class="logo"/>
+  <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+    <i class="fas fa-bars"></i>
+  </button>
+  <nav class="nav-main" id="navMenu">
+    <a href="index.html"><i class="fas fa-home"></i> Início</a>
+    <a href="createUser.html"><i class="fas fa-user-plus"></i> Cadastro</a>
+    <a href="servicos.html"><i class="fas fa-concierge-bell"></i> Serviços</a>
+    <a href="seguros.html"><i class="fa-solid fa-shield-halved"></i> Seguros</a>
+    <a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+    <a href="transacoes.html"><i class="fas fa-exchange-alt"></i> Transações</a>
+    <a href="pix.html"><i class="fas fa-qrcode"></i> Pix</a>
+    <a href="cartoes.html"><i class="fas fa-credit-card"></i> Cartões</a>
+    <a href="produtos.html"><i class="fas fa-box"></i> Produtos</a>
+    <a href="emprestimos.html"><i class="fas fa-hand-holding-usd"></i> Empréstimos</a>
+    <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+  </nav>
+</header>
 
-  <!-- Conteúdo -->
-  <main class="main-servicos">
-    <h1 class="titulo-pagina">Nossos Serviços</h1>
-    <ul class="lista-servicos">
-      <li class="servico">
-        <a href="createUser.html">
-          <strong>Cartão VascoBank Platinum</strong>
-          <span>Com benefícios exclusivos, sem anuidade e aceito em todo o mundo.</span>
-        </a>
-      </li>
-      <li class="servico">
-        <a href="createUser.html">
-          <strong>Conta Digital</strong>
-          <span>Gratuita, prática e com transferências ilimitadas via Pix.</span>
-        </a>
-      </li>
-      <li class="servico">
-        <a href="createUser.html">
-          <strong>Seguro de Vida</strong>
-          <span>Proteção completa para sua família com valores acessíveis.</span>
-        </a>
-      </li>
-      <li class="servico">
-        <a href="investimentos.html">
-          <strong>Investimentos Automatizados</strong>
-          <span>Renda fixa e variável com curadoria de IA e acompanhamento em tempo real.</span>
-        </a>
-      </li>
-    </ul>
-  </main>
+<main class="container main-servicos" id="produtosContainer">
+  <h1 class="titulo-pagina">Nossos Produtos Digitais</h1>
+  <!-- Produtos serão carregados dinamicamente via JS -->
+</main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <p>© 2025 VascoBank. Todos os direitos reservados.</p>
-    <div class="redes-sociais">
-      <a href="#" target="_blank" class="social-icon"><i class="fab fa-twitter"></i></a>
-      <a href="#" target="_blank" class="social-icon"><i class="fab fa-facebook"></i></a>
-      <a href="#" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
-      <a href="#" target="_blank" class="social-icon"><i class="fab fa-linkedin"></i></a>
-      <a href="#" target="_blank" class="social-icon"><i class="fab fa-rumble"></i></a>
-      <a href="#" target="_blank" class="social-icon"><i class="fab fa-pinterest"></i></a>
-      <a href="#" target="_blank" class="social-icon"><i class="fab fa-threads"></i></a>
-    </div>
-  </footer>
+<footer class="footer">
+  <p>© 2025 VascoBank. Todos os direitos reservados.</p>
+  <div class="redes-sociais">
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
+  </div>
+</footer>
+
+<script>
+  // Array de produtos
+  const produtos = [
+    { nome: "Conta Corrente Digital", link: "produtos/conta-corrente.html", icone: "fas fa-wallet" },
+    { nome: "Conta Poupança", link: "produtos/conta-poupanca.html", icone: "fas fa-piggy-bank" },
+    { nome: "Cartão de Crédito", link: "cartoes.html", icone: "fas fa-credit-card" },
+    { nome: "Cartão Virtual", link: "cartoes.html", icone: "fas fa-mobile-alt" },
+    { nome: "Empréstimo Pessoal", link: "emprestimos.html", icone: "fas fa-hand-holding-usd" },
+    { nome: "Empréstimo Consignado", link: "emprestimos.html", icone: "fas fa-file-invoice-dollar" },
+    { nome: "Investimentos", link: "produtos/investimentos.html", icone: "fas fa-chart-line" },
+    { nome: "CDB", link: "produtos/investimentos.html", icone: "fas fa-coins" },
+    { nome: "LCI / LCA", link: "produtos/investimentos.html", icone: "fas fa-landmark" },
+    { nome: "Fundos de Investimento", link: "produtos/investimentos.html", icone: "fas fa-poll" },
+    { nome: "Seguros", link: "seguros.html", icone: "fas fa-shield-alt" },
+    { nome: "Seguro de Vida", link: "seguros.html", icone: "fas fa-heartbeat" },
+    { nome: "Seguro Auto", link: "seguros.html", icone: "fas fa-car" },
+    { nome: "Seguro Residencial", link: "seguros.html", icone: "fas fa-home" },
+    { nome: "Pix", link: "pix.html", icone: "fas fa-qrcode" },
+    { nome: "Recarga de Celular", link: "transacoes.html", icone: "fas fa-mobile" },
+    { nome: "Pagamento de Contas", link: "transacoes.html", icone: "fas fa-file-invoice" },
+    { nome: "Transferência entre Contas", link: "transacoes.html", icone: "fas fa-exchange-alt" },
+    { nome: "Débito Automático", link: "transacoes.html", icone: "fas fa-calendar-check" },
+    { nome: "Carteira Digital", link: "produtos/carteira.html", icone: "fas fa-wallet" }
+  ];
+
+  const container = document.getElementById("produtosContainer");
+
+  produtos.forEach(prod => {
+    const card = document.createElement("div");
+    card.className = "home-card";
+    card.innerHTML = `
+      <a href="${prod.link}" class="produto-link">
+        <i class="${prod.icone}"></i>
+        <div class="home-card-content">
+          <h2>${prod.nome}</h2>
+        </div>
+      </a>
+    `;
+    container.appendChild(card);
+  });
+
+  // Toggle menu
+  const menuToggle = document.getElementById("menuToggle");
+  const navMenu = document.getElementById("navMenu");
+  if (menuToggle && navMenu) {
+    menuToggle.addEventListener("click", () => navMenu.classList.toggle("show"));
+  }
+</script>
 
 </body>
 </html>

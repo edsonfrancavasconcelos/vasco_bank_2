@@ -1,5 +1,10 @@
+// frontend/pages/js/auth.js
+
 export function logout() {
+  // Remove token e dados do usuário
   localStorage.removeItem('token');
-  localStorage.removeItem('user'); // se você guarda info do usuário
-  window.location.href = '/pages/login.html';
+  localStorage.removeItem('userData'); // padronizando com 'userData'
+
+  // Redireciona para login
+  window.location.href = '/login.html';
 }
