@@ -1,5 +1,8 @@
-require('dotenv').config();
-const nodemailer = require('nodemailer');
+// services/emailService.js
+import dotenv from 'dotenv';
+import nodemailer from 'nodemailer';
+
+dotenv.config();
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
@@ -18,7 +21,7 @@ const transporter = nodemailer.createTransport({
  * @param {string} html - Conteúdo HTML do email.
  * @returns {Promise<object>} - Info do envio.
  */
-async function sendEmail(to, subject, html) {
+export async function sendEmail(to, subject, html) {
   try {
     const info = await transporter.sendMail({
       from: process.env.EMAIL_FROM,
@@ -33,5 +36,3 @@ async function sendEmail(to, subject, html) {
     throw error;
   }
 }
-
-module.exports = { sendEmail };

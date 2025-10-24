@@ -1,34 +1,18 @@
-const express = require('express');
+// backend/routes/pixRoutes.js
+import express from 'express';
 const router = express.Router();
 
-const {
-  getChavesPix,
-  criarChavePix,
-  getHistoricoPix,
-  enviarPix,
-  receberPix,
-  cobrarPix,
-  agendarPix,
-  getMinhasChavesPix,
-  excluirChavePix,
-  lerQRCode,
-} = require('../controllers/pixController');
+import pixController from '../controllers/pixController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
-const { protect } = require('../middleware/authMiddleware');
+console.log("pixController carregado em pixRoutes.js:", pixController);
 
-// Aplica o middleware de autenticação a todas as rotas
-router.use(protect);
+// Rotas Pix
+router.post('/enviar', protect, pixController.enviarPix);
+router.post('/cobrar', protect, pixController.cobrarPix);
+router.post('/agendar', protect, pixController.agendarPix);
+router.post('/chave/criar', protect, pixController.criarChavePix);
+router.get('/chaves', protect, pixController.listarChavesPix);
+router.delete('/chave/deletar', protect, pixController.deletarChave);
 
-// Definição das rotas
-router.get('/chaves', getChavesPix);
-router.post('/chaves', criarChavePix);
-router.get('/historico', getHistoricoPix);
-router.post('/enviar', enviarPix);
-router.post('/receber', receberPix); // Usa a função receberPix do controlador
-router.post('/agendar', agendarPix);
-router.post('/cobrar', cobrarPix);
-router.get('/minhas-chaves', getMinhasChavesPix);
-router.delete('/chaves/:id', excluirChavePix)
-router.post('/ler-qrcode', lerQRCode);
-
-module.exports = router;
+export default router;

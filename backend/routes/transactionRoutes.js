@@ -1,14 +1,43 @@
-const express = require("express");
+// backend/routes/transactionRoutes.js
+import express from 'express';
+import {
+  criarTransacao,
+  listarTransacoesComNomes,
+  listarFaturas,
+  pagarFatura,        // caso queira adicionar pagamento via rota
+  anteciparFatura,    // se for implementar antecipação
+} from '../controllers/transactionController.js';
+import { protect } from '../middleware/authMiddleware.js';
+
 const router = express.Router();
-const { criarTransacao, listarTransacoesComNomes } = require("../controllers/transactionsController");
-const { protect } = require("../middleware/authMiddleware"); // middleware que protege rotas
 
-console.log("transactionsController =", { criarTransacao, listarTransacoesComNomes });
+// -------------------
+// Middleware de autenticação
+// -------------------
+// Todas as rotas abaixo só podem ser acessadas por usuários autenticados
+router.use(protect);
 
-// Rota POST recebe o tipo da transação pela URL (:tipo)
-router.post("/:tipo", protect, criarTransacao);
+// -------------------
+// Rotas de transações
+// -------------------
 
-// Lista todas as transações do usuário logado
-router.get("/", protect, listarTransacoesComNomes);
+// Criar nova transação (crédito, débito, pagamento, transferência, recarga, etc.)
+router.post('/nova', criarTransacao);
 
-module.exports = router;
+// Listar histórico de transações do usuário
+router.get('/historico', listarTransacoesComNomes);
+
+// -------------------
+// Rotas de fatura
+// -------------------
+
+// Listar faturas do usuário
+router.get('/faturas', listarFaturas);
+
+// Pagar fatura do usuário
+router.post('/faturas/pagar', pagarFatura);
+
+// Antecipar fatura (opcional)
+router.post('/faturas/antecipar', anteciparFatura);
+
+export default router;

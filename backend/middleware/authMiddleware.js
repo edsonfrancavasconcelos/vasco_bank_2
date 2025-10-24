@@ -1,39 +1,48 @@
-const jwt = require('jsonwebtoken');
-const asyncHandler = require('express-async-handler');
-const User = require('../models/User');
+// backend/middleware/authMiddleware.js
+import jwt from 'jsonwebtoken';
+import asyncHandler from 'express-async-handler';
+import User from '../models/Usuario.js';
 
-const protect = asyncHandler(async (req, res, next) => {
+const JWT_SECRET = process.env.JWT_SECRET || 'chave_secreta_segura';
+
+export const protect = asyncHandler(async (req, res, next) => {
   let token;
 
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    try {
-      token = req.headers.authorization.split(' ')[1];
-      console.log('Token recebido:', token);
+  console.log(`[AUTH] Verificando token para: ${req.url}`);
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log('Token decodificado:', decoded);
-
-      const user = await User.findById(decoded.id).select('-senha');
-      console.log('Usuário encontrado:', user);
-
-      if (!user) {
-        console.log('Usuário não encontrado para o ID do token');
-        return res.status(401).json({ error: 'Usuário não encontrado' });
-      }
-
-      // Aqui a correção: definir req.user como objeto usuário completo
-      req.user = user;
-      console.log('Middleware - req.user definido:', req.user);
-
-      next();
-    } catch (error) {
-      console.error('Erro no middleware de autenticação:', error);
-      return res.status(401).json({ error: 'Não autorizado, token inválido' });
-    }
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+    console.log('[AUTH] Token recebido:', token.substring(0, 20) + '...');
   } else {
-    console.log('Token ausente no cabeçalho Authorization');
-    return res.status(401).json({ error: 'Não autorizado, token ausente' });
+    console.log('[AUTH] Nenhum token fornecido para:', req.url);
+    return res
+      .status(401)
+      .json({ success: false, status: 401, data: {}, error: 'Não autorizado: Token ausente' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    console.log('[AUTH] Token decodificado:', decoded);
+
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      console.log('[AUTH] Usuário não encontrado para ID:', decoded.id);
+      return res
+        .status(404)
+        .json({ success: false, status: 404, data: {}, error: 'Usuário não encontrado' });
+    }
+
+    // Salva o documento Mongoose inteiro para permitir .save()
+    req.user = user;
+
+    console.log('[AUTH] Usuário autenticado:', req.user._id);
+
+    next();
+  } catch (err) {
+    console.error('[AUTH] Erro ao verificar token:', err.message);
+    return res
+      .status(401)
+      .json({ success: false, status: 401, data: {}, error: 'Não autorizado: Token inválido' });
   }
 });
-
-module.exports = { protect };

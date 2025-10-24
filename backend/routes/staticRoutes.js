@@ -1,6 +1,12 @@
-const path = require('path');
-const express = require('express');
+// backend/routes/pagesRoutes.js
+import path from 'path';
+import { fileURLToPath } from 'url';
+import express from 'express';
 const router = express.Router();
+
+// Para __dirname no ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const pagesDir = path.join(__dirname, '../../frontend/pages');
 
@@ -24,4 +30,4 @@ router.get('/emprestimos', (req, res) => {
   res.sendFile(path.join(pagesDir, 'emprestimos.html'));
 });
 
-module.exports = router;
+export default router;

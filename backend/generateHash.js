@@ -1,9 +1,7 @@
 // backend/generateHash.js
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
 
-const generateHash = async (senha) => {
+export async function generateHash(senha) {
   const salt = await bcrypt.genSalt(10);
   return await bcrypt.hash(senha, salt);
-};
-
-module.exports = generateHash;
+}

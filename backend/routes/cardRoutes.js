@@ -1,20 +1,22 @@
 // backend/routes/cardRoutes.js
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const {
+
+import {
   criarCartaoFisico,
   criarCartaoVirtual,
   excluirCartaoVirtual,
   listarCartoes,
   pedirNovoCartao,
-} = require('../controllers/cardController');
-const { protect } = require('../middleware/authMiddleware');
+} from '../controllers/cardController.js';
+
+import { protect } from '../middleware/authMiddleware.js';
 
 // Rotas corrigidas
-router.post('/fisico', protect, criarCartaoFisico); // Cartão físico
-router.post('/virtual', protect, criarCartaoVirtual); // Cartão virtual
+router.post('/fisico', protect, criarCartaoFisico);        // Cartão físico
+router.post('/virtual', protect, criarCartaoVirtual);      // Cartão virtual
 router.delete('/virtual/:id', protect, excluirCartaoVirtual); // Excluir virtual
-router.get('/meus-cartoes', protect, listarCartoes); // Ver meus cartões (corrigido para /meus-cartoes)
-router.post('/novo', protect, pedirNovoCartao); // Pedir novo cartão (corrigido para /novo)
+router.get('/meus-cartoes', protect, listarCartoes);       // Ver meus cartões
+router.post('/novo', protect, pedirNovoCartao);            // Pedir novo cartão
 
-module.exports = router;
+export default router;

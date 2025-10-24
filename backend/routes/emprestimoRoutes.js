@@ -1,7 +1,10 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const emprestimoController = require('../controllers/emprestimoController');
 
-router.post('/simular', emprestimoController.simular);
+// Importa com o mesmo nome do controller
+import { simularEmprestimo } from '../controllers/emprestimoController.js';
 
-module.exports = router;
+// Rota POST para simular empréstimo
+router.post('/simular', simularEmprestimo);
+
+export default router;

@@ -1,7 +1,7 @@
 // backend/utils/gerarNumeroConta.js
-const User = require('../models/User');
+import User from '../models/Usuario.js';
 
-async function gerarNumeroContaUnico() {
+export default async function gerarNumeroContaUnico() {
   let numeroConta;
   let existe = true;
 
@@ -12,5 +12,3 @@ async function gerarNumeroContaUnico() {
 
   return numeroConta;
 }
-
-module.exports = gerarNumeroContaUnico;

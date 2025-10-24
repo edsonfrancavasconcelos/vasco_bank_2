@@ -1,5 +1,5 @@
 // backend/models/PedidoCartao.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const pedidoCartaoSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -7,4 +7,4 @@ const pedidoCartaoSchema = new mongoose.Schema({
   criadoEm: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('PedidoCartao', pedidoCartaoSchema);
+export default mongoose.model('PedidoCartao', pedidoCartaoSchema);

@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+// models/Emprestimo.js
+import mongoose from 'mongoose';
 
 const emprestimoSchema = new mongoose.Schema({
   userId: String,
@@ -10,4 +11,4 @@ const emprestimoSchema = new mongoose.Schema({
   criadoEm: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Emprestimo', emprestimoSchema);
+export default mongoose.model('Emprestimo', emprestimoSchema);

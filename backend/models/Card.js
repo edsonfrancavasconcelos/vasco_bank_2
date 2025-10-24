@@ -1,4 +1,6 @@
-const mongoose = require('mongoose');
+// models/Card.js
+import mongoose from 'mongoose';
+
 const CardSchema = new mongoose.Schema({
   tipo: { type: String, required: true, enum: ['fisico', 'virtual'] },
   emailUsuario: { type: String, required: true },
@@ -8,4 +10,5 @@ const CardSchema = new mongoose.Schema({
   validade: { type: String },
   criadoEm: { type: Date, default: Date.now },
 });
-module.exports = mongoose.model('Card', CardSchema);
+
+export default mongoose.model('Card', CardSchema);

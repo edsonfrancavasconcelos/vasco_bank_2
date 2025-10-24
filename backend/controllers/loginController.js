@@ -1,9 +1,11 @@
-const Usuario = require('../models/Usuario');
-const jwt = require('jsonwebtoken');
+// ------------------- Imports -------------------
+import Usuario from '../models/Usuario.js';
+import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'chave_secreta_segura';
 
-exports.login = async (req, res) => {
+// ------------------- Controller -------------------
+export async function login(req, res) {
   const { email, senha } = req.body;
 
   try {
@@ -35,4 +37,4 @@ exports.login = async (req, res) => {
     console.error('Erro no login:', err);
     res.status(500).json({ msg: 'Erro no servidor' });
   }
-};
+}

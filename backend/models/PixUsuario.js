@@ -1,9 +1,10 @@
-const mongoose = require('mongoose');
+// backend/models/PixUsuario.js
+import mongoose from 'mongoose';
 
 const chaveSchema = new mongoose.Schema({
   tipo: {
     type: String,
-    enum: ['cpf', 'email', 'telefone', 'aleatoria', 'cnpj'],
+    enum: ["cpf", "email", "telefone", "aleatoria", "cnpj"],
     required: true,
   },
   valor: {
@@ -15,7 +16,7 @@ const chaveSchema = new mongoose.Schema({
 const pixUsuarioSchema = new mongoose.Schema({
   usuario: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "Usuario", // Corrigido de 'User' para 'Usuario'
     unique: true,
     required: true,
   },
@@ -25,4 +26,4 @@ const pixUsuarioSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('PixUsuario', pixUsuarioSchema);
+export default mongoose.model("PixUsuario", pixUsuarioSchema);
