@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar Conta - VascoBank</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/createUser.css">
+</head>
+<body class="body">
+
+<header class="header">
+  <img src="img/vb_bank.png" alt="Logo VascoBank" class="logo"/>
+
+  <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <nav class="nav-main" id="navMenu">
+    <a href="index.html"><i class="fas fa-home"></i> Início</a>
+    <a href="createUser.html"><i class="fas fa-user-plus"></i> Cadastro</a>
+    <a href="servicos.html"><i class="fas fa-concierge-bell"></i> Serviços</a>
+    <a href="seguros.html"><i class="fa-solid fa-shield-halved"></i> Seguros</a>
+    <a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+    <a href="transacoes.html"><i class="fas fa-exchange-alt"></i> Transações</a>
+    <a href="pix.html"><i class="fas fa-qrcode"></i> Pix</a>
+    <a href="cartoes.html"><i class="fas fa-credit-card"></i> Cartões</a>
+    <a href="produtos.html"><i class="fas fa-box"></i> Produtos</a>
+    <a href="emprestimos.html"><i class="fas fa-hand-holding-usd"></i> Empréstimos</a>
+    <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+  </nav>
+</header>
+
+<main class="createUser-main">
+  <h1><i class="fas fa-user-plus"></i> Criar Conta</h1>
+
+  <form id="createUserForm">
+    <label for="nome"><i class="fas fa-user"></i> Nome Completo</label>
+    <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required />
+
+    <label for="email"><i class="fas fa-envelope"></i> E-mail</label>
+    <input type="email" id="email" name="email" placeholder="seu@email.com" required autocomplete="email" />
+
+    <label for="cpf"><i class="fas fa-id-card"></i> CPF</label>
+    <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required />
+
+    <label for="telefone"><i class="fas fa-phone"></i> Telefone</label>
+    <input type="text" id="telefone" name="telefone" placeholder="(00) 00000-0000" required />
+
+    <label for="endereco"><i class="fas fa-home"></i> Endereço</label>
+    <input type="text" id="endereco" name="endereco" placeholder="Rua Exemplo, 123" required />
+
+    <label for="senha"><i class="fas fa-lock"></i> Senha</label>
+    <input type="password" id="senha" name="senha" placeholder="Senha segura" required autocomplete="new-password" />
+
+    <label for="confirmarSenha"><i class="fas fa-lock"></i> Confirmar Senha</label>
+    <input type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Repita a senha" required autocomplete="new-password" />
+
+    <label for="saldoInicial"><i class="fas fa-wallet"></i> Saldo Inicial</label>
+    <input type="number" id="saldoInicial" name="saldoInicial" placeholder="Valor inicial da conta" min="0" step="0.01" value="0" required />
+
+    <button type="submit"><i class="fas fa-check-circle"></i> Criar Conta</button>
+    <button type="button" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Voltar</button>
+    <button type="button" onclick="window.location.href='login.html'"><i class="fas fa-sign-in-alt"></i> Faça Login</button>
+  </form>
+</main>
+
+<footer class="footer">
+  <p>© 2025 VascoBank. Todos os direitos reservados.</p>
+  <div class="redes-sociais">
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
+  </div>
+</footer>
+
+<script type="module">
+  import { initCreateUser } from './js/createUser.js';
+  initCreateUser();
+
+  const menuToggle = document.getElementById("menuToggle");
+  const navMenu = document.getElementById("navMenu");
+  if (menuToggle && navMenu) {
+    menuToggle.addEventListener("click", () => navMenu.classList.toggle("show"));
+  }
+</script>
+
+</body>
+</html>

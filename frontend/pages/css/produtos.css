@@ -1,0 +1,69 @@
+/* =========================================================
+   PRODUTOS.CSS - Estilos específicos da página de Serviços/Produtos
+   ========================================================= */
+
+/* ---------- Corpo da página ---------- */
+body {
+  background-color: var(--cinza-900);
+  color: var(--branco);
+}
+
+/* ---------- Conteúdo principal ---------- */
+.main-servicos {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ---------- Título da página ---------- */
+.titulo-pagina {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: var(--laranja-500);
+  text-align: center;
+}
+
+/* ---------- Lista de serviços ---------- */
+.lista-servicos {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+/* ---------- Cada serviço individual ---------- */
+.servico {
+  background-color: var(--cinza-800);
+  border-radius: var(--border-radius);
+  padding: 15px;
+  transition: transform 0.2s, background-color 0.3s;
+}
+
+.servico a {
+  color: var(--branco);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.servico i {
+  font-size: 2rem;
+  color: var(--laranja-500);
+}
+
+.servico strong {
+  font-size: 1.1rem;
+}
+
+.servico span {
+  font-size: 0.95rem;
+  color: var(--cinza-300);
+}
+
+/* ---------- Hover e interatividade ---------- */
+.servico:hover {
+  background-color: var(--cinza-700);
+  transform: translateY(-3px);
+}

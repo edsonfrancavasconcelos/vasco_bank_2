@@ -1,0 +1,94 @@
+/* =========================================================
+   LOGIN.CSS - Estilos específicos da página de login
+   ========================================================= */
+
+/* ---------- Corpo da página ---------- */
+.login-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--cinza-900);
+  color: var(--branco);
+}
+
+/* ---------- Container central ---------- */
+.login-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+  padding: 20px;
+}
+
+.login-container {
+  background-color: var(--cinza-800);
+  padding: 30px;
+  border-radius: var(--border-radius);
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  text-align: center;
+}
+
+/* ---------- Título ---------- */
+.login-titulo {
+  color: var(--laranja-500);
+  margin-bottom: 20px;
+}
+
+/* ---------- Inputs com ícones ---------- */
+.input-icon {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.input-icon i {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--laranja-500);
+}
+
+.login-input {
+  width: 100%;
+  padding: 10px 10px 10px 35px;
+  border: none;
+  border-radius: var(--border-radius);
+  background-color: var(--cinza-700);
+  color: var(--branco);
+}
+
+.login-input::placeholder {
+  color: var(--cinza-400);
+}
+
+/* ---------- Botões ---------- */
+.btn-laranja, .btn-reset {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: var(--border-radius);
+  background-color: var(--laranja-500);
+  color: var(--branco);
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-laranja:hover, .btn-reset:hover {
+  background-color: var(--laranja-600);
+  transform: translateY(-2px);
+}
+
+/* ---------- Link de reset ---------- */
+.login-reset-link {
+  margin: 10px 0;
+}
+
+.login-reset {
+  display: none; /* Inicialmente oculto, aparece ao clicar em "Esqueceu a senha" */
+  margin-top: 10px;
+}

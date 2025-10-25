@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minha Conta - VascoBank</title>
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/historico.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="body">
+
+<header class="header">
+  <img src="img/vb_bank.png" alt="Logo VascoBank" class="logo"/>
+  <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+    <i class="fas fa-bars"></i>
+  </button>
+  <nav class="nav-main" id="navMenu">
+    <a href="index.html"><i class="fas fa-home"></i> Início</a>
+    <a href="createUser.html"><i class="fas fa-user-plus"></i> Cadastro</a>
+    <a href="servicos.html"><i class="fas fa-concierge-bell"></i> Serviços</a>
+    <a href="seguros.html"><i class="fa-solid fa-shield-halved"></i> Seguros</a>
+    <a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+    <a href="transacoes.html"><i class="fas fa-exchange-alt"></i> Transações</a>
+    <a href="pix.html"><i class="fas fa-qrcode"></i> Pix</a>
+    <a href="cartoes.html"><i class="fas fa-credit-card"></i> Cartões</a>
+    <a href="produtos.html"><i class="fas fa-box"></i> Produtos</a>
+    <a href="emprestimos.html"><i class="fas fa-hand-holding-usd"></i> Empréstimos</a>
+    <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+  </nav>
+</header>
+
+<main class="dashboard-main container">
+  <h1>Olá, <span id="nomeUsuario">Usuário</span>, tudo bem?</h1>
+
+  <section class="info-conta">
+    <p><strong><i class="fas fa-id-card"></i> Conta:</strong> <span id="numeroConta">...</span></p>
+    <p><strong><i class="fas fa-wallet"></i> Saldo:</strong> <span id="saldo">R$ 0,00</span></p>
+    <p><strong><i class="fas fa-file-invoice-dollar"></i> </strong> 
+    <a href="#"
+   id="fatura"
+   style="text-decoration:underline; color:#fc770a; transition:color 0.3s;"
+   onmouseover="this.style.color='#92531f'"
+   onmouseout="this.style.color='#fc770a'">
+   R$ 0,00
+</a>
+
+    </p>
+  </section>
+
+  <!-- Botões para histórico -->
+  <div class="botoes-historico" style="margin-top:15px;">
+    <button id="btnDebito" class="btn laranja">Histórico de Débito</button>
+    <button id="btnCredito" class="btn laranja">Histórico de Crédito</button>
+  </div>
+
+  <!-- Container histórico -->
+  <div id="historicoContainer" style="margin-top:15px;">
+    <ul id="historicoDebito" style="list-style:none; padding:0; display:none;"></ul>
+    <ul id="historicoCredito" style="list-style:none; padding:0; display:none;"></ul>
+  </div>
+
+  <!-- Ações fatura -->
+  <section class="acoes-fatura" style="margin-top:20px;">
+    <button id="btnPagarFatura" class="btn laranja" style="display:none;">Pagar Fatura</button>
+    <button id="btnAnteciparFatura" class="btn laranja" style="display:none;">Antecipar Fatura</button>
+  </section>
+</main>
+
+<!-- Modal genérico -->
+<div id="modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span id="modalClose" class="modal-close">&times;</span>
+    <h2 id="modalTitle"></h2>
+    <div id="modalBody"></div>
+  </div>
+</div>
+<!-- Modal de Pagamento da Fatura -->
+<div id="modalPagamentoFatura" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="modal-close" id="closeModalPagamento">&times;</span>
+    <h2 style="color:#fc770a;">Pagamento de Fatura</h2>
+    <p>Selecione uma das opções abaixo:</p>
+
+    <div class="opcoes-pagamento">
+      <button class="btn laranja" id="btnGerarBoleto"><i class="fas fa-barcode"></i> Gerar Boleto</button>
+      <button class="btn laranja" id="btnPix"><i class="fas fa-qrcode"></i> Copiar/Colar Pix</button>
+      <button class="btn laranja" id="btnPagarSaldo"><i class="fas fa-wallet"></i> Pagar com Saldo</button>
+      <button class="btn laranja" id="btnPagarCredito"><i class="fas fa-credit-card"></i> Pagar com Crédito</button>
+      <button class="btn laranja" id="btnGerarPDF"><i class="fas fa-file-pdf"></i> Gerar Fatura PDF</button>
+    </div>
+
+    <div id="areaResultadoPagamento" style="margin-top:20px;"></div>
+  </div>
+</div>
+
+
+<!-- Modal detalhada da fatura (apenas créditos) -->
+<div id="modalFatura" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+  <div style="background:#fff; padding:20px; max-width:400px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+    <h2>Detalhes da Fatura Atual</h2>
+    <div id="modalFaturaBody">Carregando...</div>
+    <button id="modalFaturaClose" style="margin-top:10px;">Fechar</button>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>© 2025 VascoBank. Todos os direitos reservados.</p>
+  <div class="redes-sociais">
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
+  </div>
+</footer>
+
+<script type="module">
+  import { initDashboard } from './js/dashboard.js';
+  initDashboard();
+</script>
+
+<script>
+  // Menu toggle
+  const menuToggle = document.getElementById("menuToggle");
+  const navMenu = document.getElementById("navMenu");
+  if (menuToggle && navMenu) {
+    menuToggle.addEventListener("click", () => navMenu.classList.toggle("show"));
+  }
+</script>
+
+</body>
+</html>

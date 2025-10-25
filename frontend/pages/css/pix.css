@@ -1,0 +1,52 @@
+/* ---------- Container de Botões Pix ---------- */
+.pix-buttons {
+  display: flex;
+  flex-direction: column; /* empilha os botões verticalmente */
+  align-items: center;    /* centraliza horizontalmente */
+  gap: 15px;              /* espaço entre os botões */
+  margin: 30px 0;         /* margem superior e inferior */
+}
+
+/* ---------- Botões Pix ---------- */
+.pix-buttons button,
+.menu-pix button {
+  width: 80%;               /* estica os botões na tela */
+  max-width: 400px;         /* limite máximo de largura */
+  background-color: var(--laranja-500);
+  color: var(--branco);
+  border: none;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  justify-content: center;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.pix-buttons button:hover,
+.menu-pix button:hover {
+  background-color: var(--laranja-700);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+.pix-buttons button:active,
+.menu-pix button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .pix-buttons button,
+  .menu-pix button {
+    font-size: 15px;
+    padding: 12px;
+    width: 90%;
+  }
+}

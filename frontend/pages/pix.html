@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pix - VascoBank</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/pix.css">
+</head>
+
+<body class="body">
+
+<header class="header">
+  <img src="img/vb_bank.png" alt="Logo VascoBank" class="logo"/>
+  <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+    <i class="fas fa-bars"></i>
+  </button>
+  <nav class="nav-main" id="navMenu">
+    <a href="index.html"><i class="fas fa-home"></i> Início</a>
+    <a href="createUser.html"><i class="fas fa-user-plus"></i> Cadastro</a>
+    <a href="servicos.html"><i class="fas fa-concierge-bell"></i> Serviços</a>
+    <a href="seguros.html"><i class="fa-solid fa-shield-halved"></i> Seguros</a>
+    <a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+    <a href="transacoes.html"><i class="fas fa-exchange-alt"></i> Transações</a>
+    <a href="pix.html"><i class="fas fa-qrcode"></i> Pix</a>
+    <a href="cartoes.html"><i class="fas fa-credit-card"></i> Cartões</a>
+    <a href="produtos.html"><i class="fas fa-box"></i> Produtos</a>
+    <a href="emprestimos.html"><i class="fas fa-hand-holding-usd"></i> Empréstimos</a>
+    <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+  </nav>
+</header>
+<img src="img/Uma vista de macro de uma visão de um banco digital com linhas transparentes minimasnuma cor laranja.jpeg" alt="Cell">
+
+  <!-- Main Pix -->
+  <main class="container" id="pixContainer">
+    <h1>Pix</h1>
+    <div class="pix-buttons">
+      <button id="btnPixEnviar">Enviar Pix</button>
+      <button id="btnPixCobrar">Receber / Cobrar Pix</button>
+      <button id="btnPixAgendar">Agendar Pix</button>
+      <button id="btnPixCriarChave">Criar Chave Pix</button>
+      <button id="btnPixVerChaves">Ver Chaves</button>
+    </div>
+    <ul id="listaChavesPix"></ul>
+  </main>
+
+<footer class="footer">
+  <p>© 2025 VascoBank. Todos os direitos reservados.</p>
+  <div class="redes-sociais">
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
+    <a href="#" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
+  </div>
+</footer>
+
+  <!-- Scripts -->
+  <script type="module" src="js/main.js"></script>
+<script type="module">
+  import { initPixPage } from '/pages/js/pix.js';
+  initPixPage();
+</script>
+
+<script>
+  const menuToggle = document.getElementById("menuToggle");
+  const navMenu = document.getElementById("navMenu");
+  if (menuToggle && navMenu) {
+    menuToggle.addEventListener("click", () => navMenu.classList.toggle("show"));
+  }
+</script>
+
+
+
+</body>
+</html>

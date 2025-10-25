@@ -1,0 +1,217 @@
+/* ===================== SEÇÕES ===================== */
+/* Esconde todas as seções por padrão */
+#secPix,
+.sec-transacao {
+  display: none;
+}
+
+/* Mostra quando ativo via JS */
+#secPix.ativo,
+.sec-transacao.ativo {
+  display: block;
+}
+
+/* ===================== MENU TRANSACOES ===================== */
+.menu-transacoes {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+  padding: 0;
+}
+
+.menu-transacoes button {
+  background-color: var(--laranja-500);
+  color: var(--branco);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 12px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  width: 100%;
+  justify-content: center;
+}
+
+.menu-transacoes button:hover {
+  background-color: var(--laranja-700);
+  transform: translateY(-2px);
+}
+
+/* ===================== SEÇÕES DE TRANSACAO ===================== */
+.sec-transacao {
+  background-color: var(--cinza-800);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+}
+
+.sec-transacao h2 {
+  margin-bottom: 15px;
+  color: var(--laranja-500);
+}
+
+/* ---------- Forms internos ---------- */
+.sec-transacao form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sec-transacao form input[type="text"],
+.sec-transacao form input[type="number"],
+.sec-transacao form input[type="tel"],
+.sec-transacao form select {
+  padding: 10px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--cinza-900);
+  background-color: var(--cinza-900);
+  color: var(--laranja-500);
+  font-size: 14px;
+}
+
+.sec-transacao form button {
+  width: 100%;
+  margin-top: 10px;
+  background-color: var(--laranja-500);
+  color: var(--branco);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.sec-transacao form button:hover {
+  background-color: var(--laranja-700);
+  transform: translateY(-2px);
+}
+
+/* ===================== CARDS DE TRANSACOES ===================== */
+#containerCardsTransacoes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.card-transacao {
+  background-color: var(--cinza-900);
+  color: var(--branco);
+  padding: 15px 20px;
+  border-radius: var(--border-radius);
+  border-left: 5px solid var(--laranja-500);
+  font-family: 'Segoe UI', sans-serif;
+  transition: transform 0.2s, box-shadow 0.2s, border-left 0.3s;
+}
+
+.card-transacao:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  border-left: 5px solid var(--laranja-400);
+}
+
+.card-transacao small {
+  color: #ccc;
+  display: block;
+  margin-top: 6px;
+}
+
+/* ===================== AREA PIX ===================== */
+.menu-pix {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 15px 0;
+  padding: 0;
+}
+
+.menu-pix button {
+  background-color: var(--laranja-500);
+  color: var(--branco);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 10px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  justify-content: center;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.menu-pix button:hover {
+  background-color: var(--laranja-700);
+  transform: translateY(-2px);
+}
+
+.chaves-pix-section {
+  margin-top: 15px;
+}
+
+.pix-lista {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-pix {
+  background-color: var(--cinza-900);
+  padding: 12px 15px;
+  border-radius: var(--border-radius);
+  color: var(--branco);
+  font-size: 14px;
+  border-left: 4px solid var(--laranja-500);
+  transition: transform 0.2s, box-shadow 0.2s, border-left 0.3s;
+}
+
+.card-pix:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  border-left: 4px solid var(--laranja-400);
+}
+.select-operadora {
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  padding-left: 40px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Atualiza o background do select conforme a opção selecionada */
+.select-operadora option {
+  padding-left: 30px;
+}
+
+.select-operadora option[value="Vivo"] { background-image: url('https://upload.wikimedia.org/wikipedia/commons/8/8b/Vivo_logo_2017.svg'); }
+.select-operadora option[value="Claro"] { background-image: url('https://upload.wikimedia.org/wikipedia/commons/0/00/Claro_logo.svg'); }
+.select-operadora option[value="TIM"] { background-image: url('https://upload.wikimedia.org/wikipedia/commons/6/61/Logo_TIM_2016.svg'); }
+.select-operadora option[value="Oi"] { background-image: url('https://upload.wikimedia.org/wikipedia/commons/1/18/Oi_Logo.svg'); }
+
+
+/* ===================== RESPONSIVIDADE ===================== */
+@media (max-width: 480px) {
+  .sec-transacao {
+    padding: 15px;
+  }
+
+  .menu-transacoes button,
+  .menu-pix button {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .card-transacao,
+  .card-pix {
+    padding: 12px 10px;
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,147 @@
+/* ---------- Main ---------- */
+main {
+  max-width: 800px; /* antes 480px, agora mais largo */
+  width: 90%;       /* ocupa 90% da tela */
+  margin: 30px auto;
+  padding: 30px;
+  background-color: var(--cinza-800);
+  border-radius: var(--border-radius);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* opcional, deixa mais destacado */
+}
+
+/* ---------- Título ---------- */
+main h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem; /* maior que antes */
+}
+
+/* ---------- Formulário ---------- */
+form#createUserForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* mais espaçamento */
+}
+
+form#createUserForm label {
+  font-weight: 500;
+}
+
+form#createUserForm input[type="text"],
+form#createUserForm input[type="email"],
+form#createUserForm input[type="password"] {
+  padding: 12px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--cinza-900);
+  background-color: var(--cinza-900);
+  color: var(--laranja-500);
+  font-size: 18px; /* inputs maiores */
+}
+
+form#createUserForm button {
+  background-color: var(--laranja-500);
+  color: var(--branco);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 14px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+form#createUserForm button:hover {
+  background-color: var(--laranja-700);
+  transform: translateY(-2px);
+}
+
+/* Botões secundários (Voltar e Faça Login) */
+form#createUserForm button[type="button"] {
+  background-color: var(--cinza-900);
+  color: var(--laranja-500);
+}
+
+form#createUserForm button[type="button"]:hover {
+  background-color: var(--cinza-800);
+  color: var(--laranja-700);
+}
+.sucesso-card {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 12px;
+  background: #1e1e1e;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.3);
+}
+
+.sucesso-header {
+  margin-bottom: 15px;
+}
+
+.sucesso-header i {
+  font-size: 48px;
+  color: #4caf50;
+}
+
+.sucesso-body p {
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+.btn-concluir {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #ff6600;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-concluir:hover {
+  background: #e65c00;
+}
+
+
+/* ---------- Responsividade ---------- */
+@media (max-width: 768px) {
+  main {
+    width: 95%;
+    padding: 20px;
+  }
+
+  form#createUserForm input[type="text"],
+  form#createUserForm input[type="email"],
+  form#createUserForm input[type="password"] {
+    font-size: 16px;
+  }
+
+  form#createUserForm button {
+    font-size: 16px;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  main {
+    padding: 15px;
+    margin: 10px;
+  }
+
+  form#createUserForm input[type="text"],
+  form#createUserForm input[type="email"],
+  form#createUserForm input[type="password"] {
+    font-size: 14px;
+  }
+
+  form#createUserForm button {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
