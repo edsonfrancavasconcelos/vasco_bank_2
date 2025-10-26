@@ -181,7 +181,7 @@ app.use('/api/emprestimos', emprestimoRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/pix', pixRoutes);
 app.use('/api/historico', historicoRoutes);
-app.use('/api/user/fatura', faturaRoutes);
+app.use('/api/fatura', faturaRoutes);
 
 
 

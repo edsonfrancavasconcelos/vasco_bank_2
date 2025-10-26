@@ -8,60 +8,40 @@ import Usuario from "../models/Usuario.js";
 
 const router = express.Router();
 
-// =====================
-// Rota para obter fatura atual
-// =====================
-router.get("/atual", protect, async (req, res) => {
+// Fatura atual
+router.get("/atual", protect, async (req, res) => { 
+  // ... lógica da fatura atual
+});
+
+// Fatura crédito
+router.get("/credito", protect, async (req, res) => {
   try {
-    const userId = req.user._id;
+    const usuarioId = req.user._id;
+    const fatura = await Fatura.findOne({ usuario: usuarioId, status: "aberta" });
 
-    // Busca fatura aberta
-    let fatura = await Fatura.findOne({ usuario: userId, status: "aberta" });
+    if (!fatura) return res.status(404).json({ error: "Nenhuma fatura encontrada" });
 
-    if (!fatura) {
-      // Cria fatura se não existir
-      fatura = await Fatura.create({
-        usuario: userId,
-        valor: 0,
-        status: "aberta",
-        descricao: "Fatura aberta",
-        data: new Date(),
-      });
-    }
-
-    // Soma todas transações de débito concluídas vinculadas à fatura
-    const transacoesDebito = await Transaction.find({
-      usuario: userId,
+    const transacoesCredito = await Transaction.find({
+      usuario: usuarioId,
       faturaId: fatura._id,
-      tipoOperacao: "debito",
+      tipoOperacao: "credito",
       status: "concluida",
     });
 
-    const totalDebito = transacoesDebito.reduce((acc, tx) => acc + (Number(tx.valor) || 0), 0);
-
-    // Atualiza valor da fatura
-    fatura.valor = totalDebito;
-    await fatura.save();
-
-    // Atualiza faturaAtual do usuário
-    const usuario = await Usuario.findById(userId);
-    if (usuario) {
-      usuario.faturaAtual = fatura.valor;
-      await usuario.save();
-    }
+    const totalCredito = transacoesCredito.reduce((acc, tx) => acc + (Number(tx.valor) || 0), 0);
 
     res.json({
       success: true,
-      faturaId: fatura._id,
-      valor: fatura.valor.toFixed(2),
+      valor: totalCredito,
       status: fatura.status,
-      saldoUsuario: usuario?.saldo.toFixed(2) || 0,
+      faturaId: fatura._id,
     });
   } catch (err) {
-    console.error("Erro ao buscar fatura atual:", err);
-    res.status(500).json({ success: false, error: "Erro ao buscar fatura atual" });
+    console.error("Erro ao buscar fatura crédito:", err);
+    res.status(500).json({ error: "Erro interno ao buscar fatura" });
   }
 });
+
 
 // =====================
 // Outras rotas
