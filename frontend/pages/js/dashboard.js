@@ -25,39 +25,47 @@ export async function initDashboard() {
       throw new Error("Elementos essenciais não encontrados no DOM.");
     }
 
-    // === FETCH PADRÃO COM TRATAMENTO DE ERRO ===
+    // === FETCH CENTRALIZADO COM TOKEN ===
     async function fetchData(url, options = {}) {
-      const res = await fetchWithAuth(url, options);
+      const res = await fetchWithAuth(url, {
+        ...options,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          ...(options.headers || {})
+        }
+      });
       if (!res) throw new Error("Resposta vazia do servidor.");
       if (!res.success) throw new Error(res.error || res.message || "Erro do servidor.");
       return res.data ?? res;
     }
 
-    // === ATUALIZA DADOS PRINCIPAIS ===
+    // === FUNÇÃO ÚNICA PARA RENDERIZAR FATURA ===
+    function renderFatura(valor) {
+      const diaAtual = new Date().getDate();
+      faturaEl.dataset.valor = valor;
+      if (valor > 0) {
+        faturaEl.textContent = diaAtual >= 30
+          ? `Pagar Fatura: ${formatCurrency(valor)}`
+          : `Fatura aberta: ${formatCurrency(valor)}`;
+        faturaEl.classList.toggle("pagar-fatura", diaAtual >= 30);
+      } else {
+        faturaEl.textContent = formatCurrency(0);
+        faturaEl.classList.remove("pagar-fatura");
+      }
+    }
+
+    // === ATUALIZA DASHBOARD PRINCIPAL ===
     async function atualizarDashboard() {
       try {
         const data = await fetchData("/api/user/me");
-        const { nome
-
-, numeroConta, saldo = 0, fatura = 0 } = data;
+        const { nome, numeroConta, saldo = 0, fatura = 0 } = data;
 
         nomeUsuarioEl.textContent = nome || "Usuário";
         numeroContaEl.textContent = numeroConta || "----";
         saldoEl.textContent = formatCurrency(saldo);
 
-        faturaEl.dataset.valor = fatura;
-        const diaAtual = new Date().getDate();
-
-        if (fatura > 0) {
-          faturaEl.textContent =
-            diaAtual >= 30
-              ? `Pagar Fatura: ${formatCurrency(fatura)}`
-              : `Fatura aberta: ${formatCurrency(fatura)}`;
-          faturaEl.classList.toggle("pagar-fatura", diaAtual >= 30);
-        } else {
-          faturaEl.textContent = formatCurrency(0);
-          faturaEl.classList.remove("pagar-fatura");
-        }
+        renderFatura(fatura);
 
         listaDebito.innerHTML = "";
         listaCredito.innerHTML = "";
@@ -70,27 +78,20 @@ export async function initDashboard() {
       }
     }
 
-    // === ATUALIZA SALDO DA FATURA ===
+    // === ATUALIZA SALDO DA FATURA (somente créditos) ===
     async function atualizarSaldoFatura() {
       try {
-        const registros = await fetchData("/api/user/me/historico?tipo=credito");
+        const registros = await fetchData("/api/fatura/credito");
         const saldo = Array.isArray(registros)
           ? registros.reduce((acc, item) => acc + Number(item.valor || 0), 0)
           : 0;
-
-        const diaAtual = new Date().getDate();
-        faturaEl.dataset.valor = saldo;
-        faturaEl.textContent =
-          diaAtual >= 30
-            ? `Pagar Fatura: ${formatCurrency(saldo)}`
-            : `Fatura aberta: ${formatCurrency(saldo)}`;
-        faturaEl.classList.toggle("pagar-fatura", diaAtual >= 30);
+        renderFatura(saldo);
       } catch (err) {
         console.error("Erro ao atualizar saldo da fatura:", err);
       }
     }
 
-    // === REVELAR / ESCONDER HISTÓRICO ===
+    // === TOGGLE HISTÓRICO DE DÉBITO / CRÉDITO ===
     async function toggleHistorico(tipo) {
       const lista = tipo === "debito" ? listaDebito : listaCredito;
       const btn = tipo === "debito" ? btnDebito : btnCredito;
@@ -105,7 +106,7 @@ export async function initDashboard() {
         btn.classList.add("active");
         btn.textContent = `Esconder ${tipo === "debito" ? "Débitos" : "Créditos"}`;
         try {
-          const data = await fetchData(`/api/user/me/historico?tipo=${tipo}`);
+          const data = await fetchData(`/api/historico/${tipo}`);
           lista.innerHTML = "";
           if (Array.isArray(data) && data.length) {
             mostrarHistorico(data, lista, tipo);
@@ -176,18 +177,13 @@ export async function initDashboard() {
 
       const diaAtual = new Date().getDate();
 
-      // -------------------------------------------------
-      // ANTECIPAÇÃO (antes do dia 30)
-      // -------------------------------------------------
+      // ---------------- ANTECIPAÇÃO (antes do dia 30) ----------------
       if (diaAtual < 30) {
-        abrirModal(
-          "Antecipar Fatura",
-          `
+        abrirModal("Antecipar Fatura", `
           <div style="color:#fff;">
             <p>Valor total da fatura: <strong>${formatCurrency(valorFatura)}</strong></p>
             <label>Quanto deseja antecipar?</label>
-            <input type="number" id="valorAnteciparInput" min="1" max="${valorFatura}"
-                   placeholder="Digite o valor (R$)" style="width:100%;padding:8px;margin:8px 0;border-radius:6px;border:none;outline:none;">
+            <input type="number" id="valorAnteciparInput" min="1" max="${valorFatura}" placeholder="Digite o valor (R$)" style="width:100%;padding:8px;margin:8px 0;border-radius:6px;border:none;outline:none;">
             <label>Forma de pagamento:</label>
             <select id="metodoPagamentoSelect" style="width:100%;padding:8px;margin:8px 0;border-radius:6px;border:none;outline:none;">
               <option value="">Selecione</option>
@@ -196,107 +192,62 @@ export async function initDashboard() {
               <option value="boleto">Boleto</option>
               <option value="credito">Cartão de crédito</option>
             </select>
-            <button id="confirmarAntecipacaoBtn" class="btn laranja"
-                    style="width:100%;margin-top:10px;">Confirmar Antecipação</button>
-          </div>`
-        );
+            <button id="confirmarAntecipacaoBtn" class="btn laranja" style="width:100%;margin-top:10px;">Confirmar Antecipação</button>
+          </div>`);
 
-        // BUSCAR ID DA FATURA UMA VEZ
         let faturaId;
         try {
-          const resFatura = await fetchData("/api/user/fatura/atual");
-          faturaId = resFatura.faturaId;
-
-          if (!faturaId || faturaId === 'null') {
-            throw new Error("Nenhuma fatura aberta para antecipar.");
-          }
+          const resFatura = await fetchData("/api/fatura/atual");
+          faturaId = resFatura?.id;
+          if (!faturaId) throw new Error("Nenhuma fatura aberta para antecipar.");
         } catch (e) {
-          return abrirModal("Erro", `<p>${e.message || "Fatura não encontrada."}</p>`);
+          return abrirModal("Erro", `<p>${e.message}</p>`);
         }
 
-        const btnConfirmar = document.getElementById("confirmarAntecipacaoBtn");
-        const inputValor = document.getElementById("valorAnteciparInput");
-        const selectMetodo = document.getElementById("metodoPagamentoSelect");
+        document.getElementById("confirmarAntecipacaoBtn")?.addEventListener("click", async () => {
+          const valor = parseFloat(document.getElementById("valorAnteciparInput").value);
+          const metodoPagamento = document.getElementById("metodoPagamentoSelect").value;
 
-        btnConfirmar?.addEventListener("click", async () => {
-          const valor = parseFloat(inputValor.value);
-          const metodoPagamento = selectMetodo.value;
-
-          if (isNaN(valor) || valor <= 0 || valor > valorFatura) {
-            return abrirModal("Erro", "<p>Informe um valor válido para antecipar.</p>");
-          }
-          if (!metodoPagamento) {
-            return abrirModal("Erro", "<p>Selecione uma forma de pagamento.</p>");
-          }
+          if (isNaN(valor) || valor <= 0 || valor > valorFatura) return abrirModal("Erro", "<p>Informe um valor válido para antecipar.</p>");
+          if (!metodoPagamento) return abrirModal("Erro", "<p>Selecione uma forma de pagamento.</p>");
 
           try {
-            const res = await fetch("/api/user/faturas/antecipar", {
+            const res = await fetchData("/api/fatura/antecipar", {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-              },
-              body: JSON.stringify({
-                faturaId,
-                valor,
-                metodoPagamento
-              })
+              body: JSON.stringify({ faturaId, valor, metodoPagamento })
             });
-
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || data.mensagem || "Erro ao antecipar.");
-
-            abrirModal("Sucesso", `<p>${data.mensagem || "Antecipação realizada com sucesso!"}</p>`);
-
-            const novoSaldo = valorFatura - valor;
-            faturaEl.dataset.valor = novoSaldo;
-            faturaEl.textContent = `Fatura aberta: ${formatCurrency(novoSaldo)}`;
-
+            abrirModal("Sucesso", `<p>${res.mensagem || "Antecipação realizada com sucesso!"}</p>`);
             await atualizarSaldoFatura();
             await atualizarDashboard();
           } catch (err) {
             abrirModal("Erro", `<p>${err.message}</p>`);
           }
         });
-
         return;
       }
 
-      // -------------------------------------------------
-      // PAGAMENTO (dia 30 ou depois)
-      // -------------------------------------------------
-      abrirModal(
-        "Pagamento de Fatura",
-        `<p>Escolha o método para pagar <strong>${formatCurrency(valorFatura)}</strong>:</p>
+      // ---------------- PAGAMENTO (dia 30 ou depois) ----------------
+      abrirModal("Pagamento de Fatura", `
+        <p>Escolha o método para pagar <strong>${formatCurrency(valorFatura)}</strong>:</p>
         <div class="btn-group-modal">
           <button id="opSaldo" class="btn laranja">Saldo</button>
           <button id="opPix" class="btn laranja">Pix</button>
           <button id="opCredito" class="btn laranja">Crédito</button>
           <button id="opBoleto" class="btn laranja">Boleto</button>
           <button id="opPDF" class="btn cinza">Gerar PDF</button>
-        </div>`
-      );
+        </div>`);
 
       document.getElementById("opPDF")?.addEventListener("click", async () => {
         try {
-          const res = await fetch("/api/user/fatura/pdf", {
-            method: "POST",
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
+          const res = await fetch(`/api/fatura/pdf/${faturaEl.dataset.id}`, { headers: { Authorization: `Bearer ${token}` } });
+          if (!res.ok) throw new Error(`Erro ${res.status}`);
           const blob = await res.blob();
-          const pdfUrl = URL.createObjectURL(blob);
-          window.open(pdfUrl, "_blank");
+          window.open(URL.createObjectURL(blob), "_blank");
         } catch (err) {
-          console.error("Erro ao gerar PDF:", err);
-          abrirModal("Erro", `<p>Falha ao gerar PDF: <strong>${err.message}</strong></p>
-            <button id="gerarPdfLocal" class="btn laranja">Gerar PDF Local</button>`);
+          abrirModal("Erro", `<p>Falha ao gerar PDF: ${err.message}</p><button id="gerarPdfLocal" class="btn laranja">Gerar PDF Local</button>`);
           document.getElementById("gerarPdfLocal")?.addEventListener("click", async () => {
             let detalhes = {};
-            try {
-              const resp = await fetchData("/api/fatura/detalhes");
-              detalhes = resp?.data ?? {};
-            } catch {}
+            try { detalhes = await fetchData("/api/fatura/detalhes"); } catch {}
             gerarPdfLocal(valorFatura, detalhes);
           });
         }
@@ -313,7 +264,7 @@ export async function initDashboard() {
       await atualizarSaldoFatura();
     }, 10 * 60 * 1000);
 
-  } catch (err) {
+  } catch {
     abrirModal("Erro", "Falha ao carregar o dashboard. Faça login novamente.");
     localStorage.removeItem("token");
     window.location.href = "/login.html";
