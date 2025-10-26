@@ -77,53 +77,54 @@ export async function initDashboard() {
         abrirModal("Erro", `<p>Erro ao atualizar dashboard: ${err.message}</p>`);
       }
     }
+/// Atualiza o saldo da fatura no dashboard
+async function atualizarSaldoFatura() {
+  try {
+    console.log('[FATURA] Iniciando atualização da fatura...');
 
-    // === ATUALIZA SALDO DA FATURA (somente créditos) ===
-    async function atualizarSaldoFatura() {
-      try {
-        const registros = await fetchData("/api/fatura/credito");
-        const saldo = Array.isArray(registros)
-          ? registros.reduce((acc, item) => acc + Number(item.valor || 0), 0)
-          : 0;
-        renderFatura(saldo);
-      } catch (err) {
-        console.error("Erro ao atualizar saldo da fatura:", err);
+    const resposta = await fetch('/api/fatura/credito', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json'
       }
+    });
+
+    if (!resposta.ok) {
+      throw new Error('Erro ao buscar dados da fatura: ' + resposta.status);
     }
 
-    // === TOGGLE HISTÓRICO DE DÉBITO / CRÉDITO ===
-    async function toggleHistorico(tipo) {
-      const lista = tipo === "debito" ? listaDebito : listaCredito;
-      const btn = tipo === "debito" ? btnDebito : btnCredito;
-      const outroBtn = tipo === "debito" ? btnCredito : btnDebito;
-      const outraLista = tipo === "debito" ? listaCredito : listaDebito;
+    const resultado = await resposta.json();
+    console.log('[FATURA] Resposta recebida:', resultado);
 
-      outraLista.classList.add("hidden");
-      outroBtn.textContent = `Histórico de ${tipo === "debito" ? "Crédito" : "Débito"}`;
-      outroBtn.classList.remove("active");
-
-      if (lista.classList.contains("hidden")) {
-        btn.classList.add("active");
-        btn.textContent = `Esconder ${tipo === "debito" ? "Débitos" : "Créditos"}`;
-        try {
-          const data = await fetchData(`/api/historico/${tipo}`);
-          lista.innerHTML = "";
-          if (Array.isArray(data) && data.length) {
-            mostrarHistorico(data, lista, tipo);
-          } else {
-            lista.innerHTML = `<li class="historico-empty">Nenhum ${tipo} encontrado.</li>`;
-          }
-          lista.classList.remove("hidden");
-        } catch {
-          lista.innerHTML = `<li class="historico-error">Erro ao carregar ${tipo}.</li>`;
-          lista.classList.remove("hidden");
-        }
-      } else {
-        lista.classList.add("hidden");
-        btn.classList.remove("active");
-        btn.textContent = `Histórico de ${tipo === "debito" ? "Débito" : "Crédito"}`;
-      }
+    if (!resultado.success || !Array.isArray(resultado.data)) {
+      throw new Error('Formato inválido de resposta');
     }
+
+    // Filtra apenas as faturas pendentes (abertas)
+    const faturaAberta = resultado.data.find(f => f.tipo === 'fatura_aberta');
+    const creditos = resultado.data.filter(f => f.tipoOperacao === 'credito');
+
+    // Calcula o total de crédito
+    const totalCredito = creditos.reduce((acc, item) => acc + item.valor, 0);
+
+    // Define o saldo da fatura
+    const valorFatura = faturaAberta ? faturaAberta.valor + totalCredito : totalCredito;
+
+    // Atualiza o valor no front
+    const faturaEl = document.getElementById('fatura');
+    if (faturaEl) {
+      faturaEl.textContent = `R$ ${valorFatura.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })}`;
+    }
+
+    console.log(`[FATURA] Fatura atualizada no front: R$ ${valorFatura}`);
+  } catch (erro) {
+    console.error('Erro ao atualizar saldo da fatura:', erro);
+  }
+}
 
     btnDebito?.addEventListener("click", () => toggleHistorico("debito"));
     btnCredito?.addEventListener("click", () => toggleHistorico("credito"));
