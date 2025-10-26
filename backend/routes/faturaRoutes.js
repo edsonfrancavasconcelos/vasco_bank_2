@@ -1,75 +1,73 @@
-// routes/faturaRoutes.js
-import express from 'express';
-import { protect } from '../middleware/authMiddleware.js';
-import Fatura from '../models/Fatura.js';
+import express from "express";
+import { protect } from "../middleware/authMiddleware.js";
+import { pagarFatura, gerarFaturaPDF } from "../controllers/faturaController.js";
+import { anteciparFatura } from "../controllers/transactionController.js";
+import Fatura from "../models/Fatura.js";
+import Transaction from "../models/Transaction.js";
+import Usuario from "../models/Usuario.js";
 
 const router = express.Router();
 
-// POST /api/user/faturas/antecipar
-router.post('/antecipar', protect, async (req, res) => {
+// =====================
+// Rota para obter fatura atual
+// =====================
+router.get("/atual", protect, async (req, res) => {
   try {
-    const { faturaId, valor, metodoPagamento } = req.body;
+    const userId = req.user._id;
 
-    // Validações
-    if (!faturaId || !valor || !metodoPagamento) {
-      return res.status(400).json({
-        success: false,
-        error: 'Todos os campos são obrigatórios: faturaId, valor, metodoPagamento'
-      });
-    }
-
-    if (valor <= 0) {
-      return res.status(400).json({
-        success: false,
-        error: 'Valor deve ser maior que zero'
-      });
-    }
-
-    const fatura = await Fatura.findOne({
-      _id: faturaId,
-      usuario: req.user._id,
-      status: 'aberta'
-    });
+    // Busca fatura aberta
+    let fatura = await Fatura.findOne({ usuario: userId, status: "aberta" });
 
     if (!fatura) {
-      return res.status(404).json({
-        success: false,
-        error: 'Fatura não encontrada ou não está aberta'
+      // Cria fatura se não existir
+      fatura = await Fatura.create({
+        usuario: userId,
+        valor: 0,
+        status: "aberta",
+        descricao: "Fatura aberta",
+        data: new Date(),
       });
     }
 
-    if (valor > fatura.valor) {
-      return res.status(400).json({
-        success: false,
-        error: 'Valor a antecipar não pode ser maior que o saldo da fatura'
-      });
-    }
+    // Soma todas transações de débito concluídas vinculadas à fatura
+    const transacoesDebito = await Transaction.find({
+      usuario: userId,
+      faturaId: fatura._id,
+      tipoOperacao: "debito",
+      status: "concluida",
+    });
 
-    // Atualiza o valor da fatura
-    fatura.valor -= valor;
-    
-    // Se zerar, muda status
-    if (fatura.valor === 0) {
-      fatura.status = 'paga';
-      fatura.dataPagamento = new Date();
-    }
+    const totalDebito = transacoesDebito.reduce((acc, tx) => acc + (Number(tx.valor) || 0), 0);
 
+    // Atualiza valor da fatura
+    fatura.valor = totalDebito;
     await fatura.save();
+
+    // Atualiza faturaAtual do usuário
+    const usuario = await Usuario.findById(userId);
+    if (usuario) {
+      usuario.faturaAtual = fatura.valor;
+      await usuario.save();
+    }
 
     res.json({
       success: true,
-      mensagem: 'Antecipação realizada com sucesso!',
-      data: {
-        faturaId: fatura._id,
-        valorRestante: fatura.valor,
-        status: fatura.status
-      }
+      faturaId: fatura._id,
+      valor: fatura.valor.toFixed(2),
+      status: fatura.status,
+      saldoUsuario: usuario?.saldo.toFixed(2) || 0,
     });
-
   } catch (err) {
-    console.error('Erro em /antecipar:', err);
-    res.status(500).json({ success: false, error: 'Erro interno' });
+    console.error("Erro ao buscar fatura atual:", err);
+    res.status(500).json({ success: false, error: "Erro ao buscar fatura atual" });
   }
 });
+
+// =====================
+// Outras rotas
+// =====================
+router.post("/pagar", protect, pagarFatura);
+router.post("/antecipar", protect, anteciparFatura);
+router.post("/pdf", protect, gerarFaturaPDF);
 
 export default router;

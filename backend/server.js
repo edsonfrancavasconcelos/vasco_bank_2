@@ -1,6 +1,5 @@
 // backend/server.js
 console.log('[DEBUG] JWT_SECRET do servidor:', process.env.JWT_SECRET);
-
 import dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
 import express from 'express';
