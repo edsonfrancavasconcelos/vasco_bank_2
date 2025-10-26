@@ -1,3 +1,4 @@
+// backend/controllers/userController.js
 import 'dotenv/config';
 import jwt from 'jsonwebtoken';
 import Usuario from '../models/Usuario.js';
@@ -6,9 +7,9 @@ import gerarNumeroContaUnico from '../utils/gerarNumeroConta.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'chave_secreta_segura';
 
-// ============================
+// ============================================================
 // LOGIN
-// ============================
+// ============================================================
 export const loginUser = async (req, res) => {
   try {
     const { email, senha } = req.body;
@@ -25,14 +26,14 @@ export const loginUser = async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1d' });
 
-    console.log('[LOGIN] Usuário logado:', user._id, user.email);
+    console.log(`[LOGIN] Usuário logado: ${user.nome} (${user.email})`);
 
     return res.status(200).json({
       token,
       user: {
         id: user._id,
-        email: user.email,
         nome: user.nome,
+        email: user.email,
         numeroConta: user.numeroConta,
         saldo: user.saldo || 0,
         faturaAtual: user.faturaAtual || 0,
@@ -40,14 +41,14 @@ export const loginUser = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('[LOGIN] Erro inesperado:', error.message, error.stack);
+    console.error('[LOGIN] Erro inesperado:', error);
     return res.status(500).json({ message: 'Erro ao fazer login.' });
   }
 };
 
-// ============================
+// ============================================================
 // DASHBOARD
-// ============================
+// ============================================================
 export const getDashboard = async (req, res) => {
   try {
     const usuario = await Usuario.findById(req.user.id).select('-senha');
@@ -62,19 +63,20 @@ export const getDashboard = async (req, res) => {
         nome: usuario.nome,
         email: usuario.email,
         numeroConta: usuario.numeroConta,
-        saldo: usuario.saldo || 0,
-        creditoUsado: usuario.creditoUsado || 0
+        saldo: Number(usuario.saldo) || 0,
+        faturaAtual: Number(usuario.faturaAtual) || 0,
+        creditoUsado: Number(usuario.creditoUsado) || 0
       }
     });
   } catch (err) {
-    console.error("[DASHBOARD] Erro:", err.message);
+    console.error("[DASHBOARD] Erro:", err);
     return res.status(500).json({ success: false, error: "Erro ao carregar dashboard." });
   }
 };
 
-// ============================
+// ============================================================
 // REGISTRO
-// ============================
+// ============================================================
 export const registerUser = async (req, res) => {
   try {
     const { nome, email, cpf, telefone, endereco, senha, saldo } = req.body;
@@ -105,6 +107,7 @@ export const registerUser = async (req, res) => {
       numeroConta,
       saldo: Number(saldo) || 0,
       faturaAtual: 0,
+      creditoUsado: 0,
       historicoFatura: [],
       historicoSaldo: [],
       transacoes: [],
@@ -112,7 +115,7 @@ export const registerUser = async (req, res) => {
 
     await novoUsuario.save();
 
-    console.log('[REGISTRO] Novo usuário:', novoUsuario._id, novoUsuario.email);
+    console.log(`[REGISTRO] Novo usuário criado: ${novoUsuario.nome} (${novoUsuario.email})`);
 
     return res.status(201).json({
       message: 'Usuário registrado com sucesso!',
@@ -120,14 +123,14 @@ export const registerUser = async (req, res) => {
       saldo: novoUsuario.saldo,
     });
   } catch (error) {
-    console.error('[REGISTRO] Erro inesperado:', error.message, error.stack);
+    console.error('[REGISTRO] Erro inesperado:', error);
     return res.status(500).json({ error: 'Erro ao registrar usuário.' });
   }
 };
 
-// ============================
+// ============================================================
 // RESET DE SENHA
-// ============================
+// ============================================================
 export const resetSenha = async (req, res) => {
   try {
     const { email, novaSenha } = req.body;
@@ -140,18 +143,18 @@ export const resetSenha = async (req, res) => {
     user.senha = novaSenha?.trim() || '123456';
     await user.save();
 
-    console.log('[RESET] Senha resetada para:', user.email);
+    console.log(`[RESET] Senha resetada para: ${user.email}`);
 
     return res.status(200).json({ message: 'Senha resetada com sucesso. Use-a para logar.' });
   } catch (error) {
-    console.error('[RESET] Erro inesperado:', error.message, error.stack);
+    console.error('[RESET] Erro inesperado:', error);
     return res.status(500).json({ error: 'Erro interno no servidor.' });
   }
 };
 
-// ============================
+// ============================================================
 // HISTÓRICO DE TRANSAÇÕES
-// ============================
+// ============================================================
 export const getHistorico = async (req, res) => {
   try {
     const userId = req.user?.id;
@@ -190,7 +193,7 @@ export const getHistorico = async (req, res) => {
 
     return res.status(200).json({ success: true, data: historico });
   } catch (err) {
-    console.error('[HISTÓRICO] Erro ao buscar histórico:', err.message);
+    console.error('[HISTÓRICO] Erro ao buscar histórico:', err);
     return res.status(500).json({ success: false, error: 'Erro ao carregar histórico.' });
   }
 };
