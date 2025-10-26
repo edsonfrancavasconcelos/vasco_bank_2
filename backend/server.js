@@ -19,7 +19,7 @@ import './models/Transaction.js';
 import './models/Card.js';
 import './models/Emprestimo.js';
 import './models/PedidoCartao.js';
-import './models/Fatura.js'; // ✅ Novo modelo de faturas
+
 
 
 // ================================
