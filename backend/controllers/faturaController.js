@@ -1,305 +1,188 @@
-import Transaction from '../models/Transaction.js';
-import Usuario from '../models/Usuario.js';
+import Fatura from "../models/Fatura.js";
+import Transaction from "../models/Transaction.js";
+import Usuario from "../models/Usuario.js";
+import PDFDocument from "pdfkit";
+import path from "path";
+import fs from "fs";
 
-
-// =================== ATUALIZA FATURA ABERTA CORRETA ===================
-export async function atualizarFaturaAberta(usuarioId) {
-  // Buscar fatura pendente mais recente
-  let fatura = await Transaction.findOne({
-    usuario: usuarioId,
-    tipo: 'fatura_aberta',
-    status: 'pendente'
-  }).sort({ createdAt: -1 });
-
-  // Se não existir, cria uma nova
-  if (!fatura) {
-    fatura = await Transaction.create({
-      usuario: usuarioId,
-      tipo: 'fatura_aberta',
-      descricao: 'Fatura aberta',
-      valor: 0,
-      tipoOperacao: 'credito',
-      status: 'pendente',
-    });
-  }
-
-  // Buscar todas as transações concluídas que afetam a fatura
-  const transacoes = await Transaction.find({
-    usuario: usuarioId,
-    status: 'concluida',
-  });
-
-  let totalDebito = 0;       // compras / débitos que aumentam a fatura
-  let totalPagamentos = 0;   // pagamentos/antecipações que reduzem a fatura
-
-  transacoes.forEach(tx => {
-    // Somar débitos (compras, etc.)
-    if (tx.tipoOperacao === 'debito' && tx.tipo !== 'antecipacao') {
-      totalDebito += Number(tx.valor || 0);
-    }
-
-    // Somar pagamentos de boleto (reduzem a fatura, não mexem no saldo)
-    if (tx.tipo === 'pagamento_boleto') {
-      totalPagamentos += Number(tx.valor || 0);
-    }
-
-    // Somar antecipações (reduzem fatura e mexem no saldo)
-    if (tx.tipo === 'antecipacao') {
-      totalPagamentos += Number(tx.valor || 0);
-    }
-  });
-
-  // Atualizar valor da fatura
-  fatura.valor = totalDebito - totalPagamentos;
-  fatura.valor = fatura.valor > 0 ? fatura.valor : 0;
-  fatura.status = fatura.valor <= 0 ? 'concluida' : 'pendente';
-  await fatura.save();
-
-  // Atualizar campo faturaAtual do usuário (saldo da fatura, não o saldo da conta)
-  const usuario = await Usuario.findById(usuarioId);
-  if (usuario) {
-    usuario.faturaAtual = fatura.valor;
-    await usuario.save();
-  }
-
-  return fatura;
-};
-
-export async function pagarFatura(req, res) {
-  try {
-    const usuarioId = req.user._id;
-    const { valor } = req.body;
-
-    const usuario = await Usuario.findById(usuarioId);
-    if (!usuario) return res.status(404).json({ success: false, mensagem: 'Usuário não encontrado' });
-
-    let fatura = await Transaction.findOne({ usuario: usuarioId, tipo: 'fatura_aberta', status: 'pendente' });
-    if (!fatura) return res.status(404).json({ success: false, mensagem: 'Nenhuma fatura encontrada' });
-
-    // Valor pago
-    const valorPago = Math.min(Number(valor), fatura.valor, usuario.saldo);
-    if (valorPago <= 0) return res.status(400).json({ success: false, mensagem: 'Saldo insuficiente ou valor inválido' });
-
-    // Atualizar fatura e usuário
-    fatura.valor -= valorPago;
-    if (fatura.valor <= 0) fatura.status = 'concluida';
-    usuario.saldo -= valorPago;
-    usuario.faturaAtual = fatura.valor;
-
-    await fatura.save();
-    await usuario.save();
-
-    // Criar transação de pagamento
-    await Transaction.create({
-      usuario: usuarioId,
-      tipo: 'pagamento_boleto',
-      descricao: `Pagamento de fatura: ${valorPago.toFixed(2)}`,
-      valor: -valorPago,
-      tipoOperacao: 'debito',
-      status: 'concluida',
-      nomeRemetente: usuario.nome,
-      nomeRecebedor: 'Cartão de Crédito',
-      data: new Date(),
-      taxa: 0
-    });
-
-    return res.status(200).json({
-      success: true,
-      mensagem: 'Pagamento realizado com sucesso!',
-      faturaRestante: fatura.valor.toFixed(2),
-      novoSaldo: usuario.saldo.toFixed(2)
-    });
-
-  } catch (err) {
-    console.error('[pagarFatura] Erro:', err);
-    return res.status(500).json({ success: false, mensagem: 'Erro interno ao pagar fatura', erro: err.message });
-  }
-}
-
-
-// =================== ANTECIPAR FATURA ===================
-export async function anteciparFatura(req, res) {
-  try {
-    const { valor } = req.body;
-    const usuarioId = req.user._id;
-
-    // Validação
-    const valorAntecipar = Number(valor);
-    if (!valor || isNaN(valorAntecipar) || valorAntecipar <= 0) {
-      return res.status(400).json({ success: false, mensagem: 'Valor inválido. Deve ser maior que zero.' });
-    }
-
-    const usuario = await Usuario.findById(usuarioId);
-    if (!usuario) return res.status(404).json({ success: false, mensagem: 'Usuário não encontrado' });
-
-    // Limpar duplicatas
-    await limparFaturasPendentes(usuarioId);
-
-    // Buscar fatura
-    let fatura = await Transaction.findOne({
-      usuario: usuarioId,
-      tipo: 'fatura_aberta',
-      status: 'pendente'
-    }).sort({ createdAt: -1 });
-
-    if (!fatura) return res.status(404).json({ mensagem: "Nenhuma fatura encontrada para antecipar." });
-    if (Number(fatura.valor) <= 0) return res.status(400).json({ mensagem: "Não há valor positivo a antecipar nesta fatura." });
-
-    // Valor final da antecipação (não pode exceder saldo nem valor da fatura)
-    const valorFinal = Math.min(valorAntecipar, fatura.valor, usuario.saldo);
-
-    if (valorFinal <= 0) {
-      return res.status(400).json({ mensagem: "Saldo insuficiente para antecipar a fatura." });
-    }
-
-    // Atualiza fatura e usuário
-    fatura.valor -= valorFinal;
-    if (fatura.valor <= 0) {
-      fatura.valor = 0;
-      fatura.status = 'concluida';
-    }
-
-    usuario.saldo -= valorFinal;
-    usuario.faturaAtual = fatura.valor;
-    await fatura.save();
-    await usuario.save();
-
-    // Criar transação de antecipação
-    await Transaction.create({
-      usuario: usuarioId,
-      tipo: 'antecipacao',
-      descricao: `Antecipação de R$ ${valorFinal.toFixed(2)} da fatura`,
-      valor: -valorFinal,
-      tipoOperacao: 'debito',
-      status: 'concluida',
-      referenciaFatura: fatura._id,
-      nomeRemetente: usuario.nome,
-      nomeRecebedor: 'Cartão de Crédito',
-      data: new Date(),
-      taxa: 0,
-    });
-
-    return res.status(200).json({
-      success: true,
-      mensagem: 'Antecipação realizada com sucesso!',
-      valorAntecipado: valorFinal.toFixed(2),
-      novoSaldo: usuario.saldo.toFixed(2),
-      faturaRestante: fatura.valor.toFixed(2)
-    });
-
-  } catch (err) {
-    console.error('[anteciparFatura] Erro:', err);
-    return res.status(500).json({
-      success: false,
-      mensagem: 'Erro interno ao antecipar fatura.',
-      erro: err.message
-    });
-  }
-}
-
-// =================== LISTAR FATURAS ===================
-export async function listarFaturas(req, res) {
-  try {
-    const usuarioId = req.user._id;
-    const faturas = await Transaction.find({
-      usuario: usuarioId,
-      tipo: 'fatura_aberta'
-    }).sort({ data: -1 }).lean();
-
-    return res.json({
-      success: true,
-      data: faturas.map(f => ({
-        _id: f._id,
-        valor: Number(f.valor || 0).toFixed(2),
-        status: f.status,
-        data: f.data,
-        descricao: f.descricao,
-      })),
-    });
-  } catch (err) {
-    console.error('[listarFaturas] Erro:', err.message);
-    return res.status(500).json({ success: false, error: err.message });
-  }
-}
-
-// =================== OBTER FATURA ATUAL ===================
-export async function getFaturaAtual(req, res) {
-  try {
-    const usuario = await Usuario.findById(req.user._id)
-      .select('faturaAtual limiteCredito creditoUsado saldo');
-    if (!usuario) {
-      return res.status(404).json({ success: false, error: 'Usuário não encontrado' });
-    }
-
-    return res.json({
-      success: true,
-      faturaAtual: Number(usuario.faturaAtual || 0).toFixed(2),
-      limiteCredito: Number(usuario.limiteCredito || 0).toFixed(2),
-      creditoUsado: Number(usuario.creditoUsado || 0).toFixed(2),
-      saldo: Number(usuario.saldo || 0).toFixed(2)
-    });
-  } catch (err) {
-    console.error('Erro ao obter fatura:', err);
-    return res.status(500).json({ success: false, error: err.message });
-  }
-}
-// ==========================
-// GERAR PDF DA FATURA ATUAL
-// ==========================
+// ========================
+// GERAR PDF DA FATURA
+// ========================
 export async function gerarFaturaPDF(req, res) {
   try {
     const usuarioId = req.user._id;
+    const { faturaId } = req.body;
 
-    // Buscar usuário e fatura atual
+    const fatura = await Fatura.findOne({ _id: faturaId, usuario: usuarioId }).populate("transacoes");
+    if (!fatura) return res.status(404).json({ success: false, message: "Fatura não encontrada" });
+
     const usuario = await Usuario.findById(usuarioId);
-    if (!usuario) return res.status(404).json({ success: false, error: 'Usuário não encontrado' });
 
-    const fatura = await Transaction.findOne({
-      usuario: usuarioId,
-      tipo: 'fatura_aberta'
-    }).sort({ createdAt: -1 });
+    // Cria PDF
+    const doc = new PDFDocument();
+    const filePath = path.join("uploads", `fatura-${faturaId}.pdf`);
+    doc.pipe(fs.createWriteStream(filePath));
 
-    if (!fatura) return res.status(404).json({ success: false, error: 'Nenhuma fatura encontrada' });
-
-    // Buscar transações vinculadas à fatura (débitos e pagamentos)
-    const transacoes = await Transaction.find({
-      usuario: usuarioId,
-      $or: [
-        { tipoOperacao: 'debito' },
-        { referenciaFatura: fatura._id }
-      ]
-    }).sort({ data: 1 });
-
-    // Criar PDF
-    const doc = new PDFDocument({ size: 'A4', margin: 50 });
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename=fatura_${usuario.numeroConta}.pdf`);
-
-    doc.pipe(res);
-
-    doc.fontSize(20).text(`Fatura do Usuário: ${usuario.nome}`, { align: 'center' });
+    doc.fontSize(18).text("FATURA - VascoBank", { align: "center" });
     doc.moveDown();
-    doc.fontSize(12).text(`Número da Conta: ${usuario.numeroConta}`);
-    doc.text(`Data: ${new Date().toLocaleDateString()}`);
-    doc.text(`Status da Fatura: ${fatura.status}`);
-    doc.text(`Valor Total: R$ ${Number(fatura.valor).toFixed(2)}`);
+    doc.fontSize(14).text(`Cliente: ${usuario.nome}`);
+    doc.text(`Período: ${fatura.mesReferencia}`);
+    doc.text(`Vencimento: ${fatura.dataVencimento.toLocaleDateString()}`);
     doc.moveDown();
 
-    doc.fontSize(14).text('Transações:', { underline: true });
+    doc.fontSize(12).text("Transações:");
+    if (fatura.transacoes.length === 0) {
+      doc.text("- Nenhuma transação registrada");
+    } else {
+      fatura.transacoes.forEach(tx => {
+        doc.text(`- ${tx.descricao || tx.tipoOperacao} | R$ ${tx.valor.toFixed(2)} | ${tx.status}`);
+      });
+    }
+
     doc.moveDown();
-
-    transacoes.forEach(tx => {
-      const tipo = tx.tipoOperacao === 'debito' ? 'Débito' : 'Crédito';
-      const valor = Number(tx.valor).toFixed(2);
-      const data = new Date(tx.data).toLocaleString();
-      const desc = tx.descricao || tx.tipo;
-      doc.fontSize(12).text(`${data} — ${tipo} — ${desc} — R$ ${valor}`);
-    });
-
+    doc.fontSize(14).text(`Total da Fatura: R$ ${fatura.valorTotal.toFixed(2)}`, { align: "right" });
     doc.end();
 
+    res.json({ success: true, message: "PDF gerado com sucesso", filePath });
   } catch (err) {
-    console.error('[gerarFaturaPDF] Erro:', err);
-    return res.status(500).json({ success: false, error: err.message });
+    console.error("[gerarFaturaPDF] Erro:", err);
+    res.status(500).json({ success: false, message: "Erro ao gerar PDF da fatura", error: err.message });
   }
 }
+
+// ========================
+// GERAR NOVA FATURA
+// ========================
+export const gerarFatura = async (req, res) => {
+  try {
+    const usuarioId = req.user._id;
+
+    // Transações de crédito sem fatura
+    const transacoesCredito = await Transaction.find({
+      usuario: usuarioId,
+      tipoOperacao: "credito",
+      fatura: null
+    });
+
+    if (transacoesCredito.length === 0) {
+      return res.status(404).json({ message: "Nenhuma transação de crédito para gerar fatura." });
+    }
+
+    const valorTotal = transacoesCredito.reduce((sum, t) => sum + t.valor, 0);
+
+    const fatura = new Fatura({
+      usuario: usuarioId,
+      transacoes: transacoesCredito.map(t => t._id),
+      valorTotal,
+      status: valorTotal > 0 ? "aberta" : "paga",
+      dataVencimento: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+      mesReferencia: `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}`
+    });
+
+    await fatura.save();
+
+    // Vincula transações à fatura
+    for (const t of transacoesCredito) {
+      t.fatura = fatura._id;
+      await t.save();
+    }
+
+    res.status(201).json({ message: "Fatura gerada com sucesso!", fatura });
+  } catch (error) {
+    console.error("Erro ao gerar fatura:", error);
+    res.status(500).json({ message: "Erro ao gerar fatura", error: error.message });
+  }
+};
+
+// ========================
+// BUSCAR FATURA ATUAL / ABERTA
+// ========================
+export const buscarFaturaAtual = async (req, res) => {
+  try {
+    const usuarioId = req.user._id;
+
+    let fatura = await Fatura.findOne({ usuario: usuarioId, status: "aberta" }).populate("transacoes");
+
+    if (!fatura) {
+      return res.status(404).json({ message: "Nenhuma fatura aberta encontrada." });
+    }
+
+    // Recalcula valorTotal apenas com transações de crédito
+    fatura.valorTotal = fatura.transacoes
+      .filter(t => t.tipoOperacao === "credito")
+      .reduce((sum, t) => sum + t.valor, 0);
+
+    await fatura.save();
+
+    res.json({
+      success: true,
+      data: {
+        id: fatura._id,
+        fatura: fatura.valorTotal,
+        status: fatura.status,
+        data: fatura.createdAt,
+        dataVencimento: fatura.dataVencimento,
+        transacoes: fatura.transacoes
+      }
+    });
+  } catch (error) {
+    console.error("Erro ao buscar fatura:", error);
+    res.status(500).json({ message: "Erro interno", error: error.message });
+  }
+};
+
+// ========================
+// PAGAR FATURA
+// ========================
+export const pagarFatura = async (req, res) => {
+  try {
+    const usuarioId = req.user._id;
+    const { faturaId } = req.body;
+
+    const fatura = await Fatura.findOne({ _id: faturaId, usuario: usuarioId }).populate("transacoes");
+    if (!fatura) return res.status(404).json({ message: "Fatura não encontrada" });
+
+    const usuario = await Usuario.findById(usuarioId);
+    if (!usuario) return res.status(404).json({ message: "Usuário não encontrado" });
+
+    if (usuario.saldo < fatura.valorTotal) {
+      return res.status(400).json({ message: `Saldo insuficiente. Disponível: R$ ${usuario.saldo.toFixed(2)}` });
+    }
+
+    // Deduz saldo e fecha fatura
+    usuario.saldo -= fatura.valorTotal;
+    fatura.status = "paga";
+    fatura.dataPagamento = new Date();
+
+    await usuario.save();
+    await fatura.save();
+
+    // Cria transação de débito
+    await Transaction.create({
+      usuario: usuarioId,
+      tipo: "pagar_fatura",
+      descricao: `Pagamento da fatura ${fatura._id}`,
+      valor: fatura.valorTotal,
+      tipoOperacao: "debito",
+      status: "concluida",
+      fatura: fatura._id,
+      nomeRemetente: usuario.nome,
+      nomeRecebedor: "Cartão de Crédito",
+      data: new Date()
+    });
+
+    res.json({
+      success: true,
+      message: "Fatura paga com sucesso",
+      fatura: {
+        id: fatura._id,
+        fatura: fatura.valorTotal,
+        status: fatura.status
+      },
+      saldoAtual: usuario.saldo.toFixed(2)
+    });
+  } catch (error) {
+    console.error("Erro ao pagar fatura:", error);
+    res.status(500).json({ message: "Erro ao pagar fatura", error: error.message });
+  }
+};

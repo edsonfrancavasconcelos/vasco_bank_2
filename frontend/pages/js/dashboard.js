@@ -40,145 +40,86 @@ export async function initDashboard() {
       return res.data ?? res;
     }
 
-    // === FUNÇÃO ÚNICA PARA RENDERIZAR FATURA ===
-    function renderFatura(valor) {
+    // === FUNÇÃO PARA RENDERIZAR FATURA ===
+    function renderFatura(valor, faturaId) {
       const diaAtual = new Date().getDate();
       faturaEl.dataset.valor = valor;
-      if (valor > 0) {
-        faturaEl.textContent = diaAtual >= 30
-          ? `Pagar Fatura: ${formatCurrency(valor)}`
-          : `Fatura aberta: ${formatCurrency(valor)}`;
-        faturaEl.classList.toggle("pagar-fatura", diaAtual >= 30);
-      } else {
-        faturaEl.textContent = formatCurrency(0);
-        faturaEl.classList.remove("pagar-fatura");
-      }
+      faturaEl.dataset.id = faturaId || "";
+      faturaEl.textContent =
+        valor > 0
+          ? diaAtual >= 30
+            ? `Pagar Fatura: ${formatCurrency(valor)}`
+            : `Fatura aberta: ${formatCurrency(valor)}`
+          : `Fatura: ${formatCurrency(0)}`;
+      faturaEl.classList.toggle("pagar-fatura", valor > 0 && diaAtual >= 30);
+      console.log(`[renderFatura] Fatura renderizada: R$ ${valor}, ID: ${faturaId}`);
     }
 
-    // === ATUALIZA DASHBOARD PRINCIPAL ===
-    async function atualizarDashboard() {
+    // === FUNÇÃO PARA ATUALIZAR DASHBOARD E FATURA ===
+    async function atualizarDashboardEFatura() {
       try {
-        const data = await fetchData("/api/user/me");
-        const { nome, numeroConta, saldo = 0, fatura = 0 } = data;
+        console.log('[DASHBOARD] Atualizando dashboard e fatura...');
+        const [userData, faturaData] = await Promise.all([
+          fetchData("/api/user/me"),
+          fetchData("/api/fatura/atual")
+        ]);
 
+        const { nome, numeroConta, saldo = 0 } = userData;
+        const { fatura = 0, id, transacoes = [] } = faturaData;
+
+        // Atualiza elementos do DOM
         nomeUsuarioEl.textContent = nome || "Usuário";
         numeroContaEl.textContent = numeroConta || "----";
         saldoEl.textContent = formatCurrency(saldo);
+        renderFatura(fatura, id);
 
-        renderFatura(fatura);
-
+        // Limpa histórico
         listaDebito.innerHTML = "";
         listaCredito.innerHTML = "";
         listaDebito.classList.add("hidden");
         listaCredito.classList.add("hidden");
         btnDebito.textContent = "Histórico de Débito";
         btnCredito.textContent = "Histórico de Crédito";
+
+        // Renderiza transações
+        transacoes.forEach(t => {
+          const linha = document.createElement('div');
+          linha.classList.add('transacao');
+          const valorFormatado = formatCurrency(Number(t.valor));
+          linha.innerHTML = `
+            <strong>${new Date(t.data).toLocaleDateString()}</strong> — ${t.tipo.toUpperCase()}<br>
+            ${t.descricao || t.tipoOperacao}<br>
+            Valor: ${t.tipoOperacao === 'credito' ? '+' : '-'}${valorFormatado} | ${t.status}<br>
+            Saldo Atual: ${formatCurrency(Number(t.saldoAtual ?? saldo))}
+          `;
+          if (t.tipoOperacao === 'credito') listaCredito.appendChild(linha);
+          else listaDebito.appendChild(linha);
+        });
+
+        console.log(`[DASHBOARD] Atualização concluída: saldo=${saldo}, fatura=${fatura}`);
       } catch (err) {
-        abrirModal("Erro", `<p>Erro ao atualizar dashboard: ${err.message}</p>`);
+        console.error('[DASHBOARD] Erro:', err);
+        if (err.message.includes("401")) {
+          alert("Sessão expirada. Faça login novamente.");
+          localStorage.removeItem("token");
+          window.location.href = "/login.html";
+        } else {
+          abrirModal("Erro", `<p>Erro ao atualizar dashboard: ${err.message}</p>`);
+        }
       }
     }
-/// Atualiza o saldo da fatura no dashboard
-async function atualizarSaldoFatura() {
-  try {
-    console.log('[FATURA] Iniciando atualização da fatura...');
 
-    const resposta = await fetch('/api/fatura/credito', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json'
-      }
-    });
+    // === EVENTOS DE HISTÓRICO ===
+    btnDebito?.addEventListener("click", () => mostrarHistorico("debito"));
+    btnCredito?.addEventListener("click", () => mostrarHistorico("credito"));
 
-    if (!resposta.ok) {
-      throw new Error('Erro ao buscar dados da fatura: ' + resposta.status);
-    }
-
-    const resultado = await resposta.json();
-    console.log('[FATURA] Resposta recebida:', resultado);
-
-    if (!resultado.success || !Array.isArray(resultado.data)) {
-      throw new Error('Formato inválido de resposta');
-    }
-
-    // Filtra apenas as faturas pendentes (abertas)
-    const faturaAberta = resultado.data.find(f => f.tipo === 'fatura_aberta');
-    const creditos = resultado.data.filter(f => f.tipoOperacao === 'credito');
-
-    // Calcula o total de crédito
-    const totalCredito = creditos.reduce((acc, item) => acc + item.valor, 0);
-
-    // Define o saldo da fatura
-    const valorFatura = faturaAberta ? faturaAberta.valor + totalCredito : totalCredito;
-
-    // Atualiza o valor no front
-    const faturaEl = document.getElementById('fatura');
-    if (faturaEl) {
-      faturaEl.textContent = `R$ ${valorFatura.toLocaleString('pt-BR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      })}`;
-    }
-
-    console.log(`[FATURA] Fatura atualizada no front: R$ ${valorFatura}`);
-  } catch (erro) {
-    console.error('Erro ao atualizar saldo da fatura:', erro);
-  }
-}
-
-    btnDebito?.addEventListener("click", () => toggleHistorico("debito"));
-    btnCredito?.addEventListener("click", () => toggleHistorico("credito"));
-
-    // === GERAR PDF LOCAL ===
-    function gerarPdfLocal(valorFatura, detalhes = {}) {
-      const janela = window.open("", "_blank", "noopener,noreferrer");
-      if (!janela) return abrirModal("Erro", "<p>Não foi possível abrir nova aba para gerar PDF.</p>");
-
-      const hoje = new Date();
-      const fechamento = new Date(hoje.getFullYear(), hoje.getMonth(), 30);
-      const vencimento = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 5);
-
-      const itens = detalhes?.itens || [];
-      const itensHtml = itens.length
-        ? itens.map(it => `<tr><td>${it.descricao || "Item"}</td><td style="text-align:right">${formatCurrency(it.valor || 0)}</td></tr>`).join("")
-        : `<tr><td colspan="2" style="text-align:center">Nenhum detalhe disponível</td></tr>`;
-
-      const html = `
-        <html><head>
-          <title>Fatura - ${formatCurrency(valorFatura)}</title>
-          <style>
-            body{font-family:Arial;margin:20px;color:#111}
-            table{width:100%;border-collapse:collapse;margin-top:16px}
-            td,th{border:1px solid #ddd;padding:8px}
-            th{background:#f7f7f7}
-            .btn{background:#ff7b00;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
-          </style>
-        </head><body>
-          <h2>Resumo da Fatura - ${formatCurrency(valorFatura)}</h2>
-          <p>Fechamento: ${fechamento.toLocaleDateString()}</p>
-          <p>Vencimento: ${vencimento.toLocaleDateString()}</p>
-          <table>
-            <thead><tr><th>Descrição</th><th>Valor</th></tr></thead>
-            <tbody>${itensHtml}</tbody>
-          </table>
-          <div style="margin-top:20px;text-align:right">
-            <button class="btn" onclick="window.print()">Imprimir / Salvar PDF</button>
-          </div>
-        </body></html>`;
-      janela.document.write(html);
-      janela.document.close();
-    }
-
-    // === CLIQUE NA FATURA ===
+    // === CLIQUE NA FATURA (ANTEICIPAÇÃO / PAGAMENTO) ===
     faturaEl.addEventListener("click", async () => {
       const valorFatura = parseFloat(faturaEl.dataset.valor || 0);
-      if (isNaN(valorFatura) || valorFatura <= 0) {
-        return abrirModal("Aviso", "<p>Não há fatura para pagar.</p>");
-      }
-
+      if (valorFatura <= 0) return abrirModal("Aviso", "<p>Não há fatura para pagar.</p>");
       const diaAtual = new Date().getDate();
 
-      // ---------------- ANTECIPAÇÃO (antes do dia 30) ----------------
+      // === ANTECIPAÇÃO (antes do dia 30) ===
       if (diaAtual < 30) {
         abrirModal("Antecipar Fatura", `
           <div style="color:#fff;">
@@ -196,30 +137,22 @@ async function atualizarSaldoFatura() {
             <button id="confirmarAntecipacaoBtn" class="btn laranja" style="width:100%;margin-top:10px;">Confirmar Antecipação</button>
           </div>`);
 
-        let faturaId;
-        try {
-          const resFatura = await fetchData("/api/fatura/atual");
-          faturaId = resFatura?.id;
-          if (!faturaId) throw new Error("Nenhuma fatura aberta para antecipar.");
-        } catch (e) {
-          return abrirModal("Erro", `<p>${e.message}</p>`);
-        }
-
-        document.getElementById("confirmarAntecipacaoBtn")?.addEventListener("click", async () => {
+        const confirmarBtn = document.getElementById("confirmarAntecipacaoBtn");
+        confirmarBtn?.addEventListener("click", async () => {
           const valor = parseFloat(document.getElementById("valorAnteciparInput").value);
           const metodoPagamento = document.getElementById("metodoPagamentoSelect").value;
 
-          if (isNaN(valor) || valor <= 0 || valor > valorFatura) return abrirModal("Erro", "<p>Informe um valor válido para antecipar.</p>");
+          if (isNaN(valor) || valor <= 0 || valor > valorFatura)
+            return abrirModal("Erro", "<p>Informe um valor válido para antecipar.</p>");
           if (!metodoPagamento) return abrirModal("Erro", "<p>Selecione uma forma de pagamento.</p>");
 
           try {
             const res = await fetchData("/api/fatura/antecipar", {
               method: "POST",
-              body: JSON.stringify({ faturaId, valor, metodoPagamento })
+              body: JSON.stringify({ valor, metodoPagamento })
             });
             abrirModal("Sucesso", `<p>${res.mensagem || "Antecipação realizada com sucesso!"}</p>`);
-            await atualizarSaldoFatura();
-            await atualizarDashboard();
+            await atualizarDashboardEFatura();
           } catch (err) {
             abrirModal("Erro", `<p>${err.message}</p>`);
           }
@@ -227,7 +160,7 @@ async function atualizarSaldoFatura() {
         return;
       }
 
-      // ---------------- PAGAMENTO (dia 30 ou depois) ----------------
+      // === PAGAMENTO (dia 30 ou depois) ===
       abrirModal("Pagamento de Fatura", `
         <p>Escolha o método para pagar <strong>${formatCurrency(valorFatura)}</strong>:</p>
         <div class="btn-group-modal">
@@ -235,37 +168,28 @@ async function atualizarSaldoFatura() {
           <button id="opPix" class="btn laranja">Pix</button>
           <button id="opCredito" class="btn laranja">Crédito</button>
           <button id="opBoleto" class="btn laranja">Boleto</button>
-          <button id="opPDF" class="btn cinza">Gerar PDF</button>
         </div>`);
 
-      document.getElementById("opPDF")?.addEventListener("click", async () => {
+      document.getElementById("opSaldo")?.addEventListener("click", async () => {
         try {
-          const res = await fetch(`/api/fatura/pdf/${faturaEl.dataset.id}`, { headers: { Authorization: `Bearer ${token}` } });
-          if (!res.ok) throw new Error(`Erro ${res.status}`);
-          const blob = await res.blob();
-          window.open(URL.createObjectURL(blob), "_blank");
-        } catch (err) {
-          abrirModal("Erro", `<p>Falha ao gerar PDF: ${err.message}</p><button id="gerarPdfLocal" class="btn laranja">Gerar PDF Local</button>`);
-          document.getElementById("gerarPdfLocal")?.addEventListener("click", async () => {
-            let detalhes = {};
-            try { detalhes = await fetchData("/api/fatura/detalhes"); } catch {}
-            gerarPdfLocal(valorFatura, detalhes);
+          const res = await fetchData("/api/fatura/pagar", {
+            method: "POST",
+            body: JSON.stringify({ faturaId: faturaEl.dataset.id, valorPagamento: valorFatura, metodoPagamento: "saldo" })
           });
+          abrirModal("Sucesso", `<p>${res.mensagem || "Pagamento realizado com sucesso!"}</p>`);
+          await atualizarDashboardEFatura();
+        } catch (err) {
+          abrirModal("Erro", `<p>Falha ao pagar fatura: ${err.message}</p>`);
         }
       });
     });
 
     // === INICIALIZAÇÃO ===
     inicializarHistorico();
-    await atualizarDashboard();
-    await atualizarSaldoFatura();
-
-    setInterval(async () => {
-      await atualizarDashboard();
-      await atualizarSaldoFatura();
-    }, 10 * 60 * 1000);
-
-  } catch {
+    await atualizarDashboardEFatura();
+    setInterval(atualizarDashboardEFatura, 10 * 60 * 1000); // Atualiza a cada 10 min
+  } catch (err) {
+    console.error('[initDashboard] Erro:', err);
     abrirModal("Erro", "Falha ao carregar o dashboard. Faça login novamente.");
     localStorage.removeItem("token");
     window.location.href = "/login.html";

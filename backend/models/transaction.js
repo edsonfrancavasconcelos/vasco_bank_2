@@ -1,10 +1,12 @@
-// backend/models/Transaction.js
 import mongoose from 'mongoose';
 
 const TransactionSchema = new mongoose.Schema({
-  usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: true },
+  usuario: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Usuario', 
+    required: true 
+  },
 
-  // Tipo da transação
   tipo: { 
     type: String, 
     enum: [
@@ -13,7 +15,6 @@ const TransactionSchema = new mongoose.Schema({
       'transferencia',
       'recarga',
       'deposito',
-      'fatura_aberta',
       'pagar_fatura',
       'pagar_minimo',
       'antecipacao',
@@ -27,8 +28,16 @@ const TransactionSchema = new mongoose.Schema({
   descricao: { type: String, default: '' },
   valor: { type: Number, required: true },
   taxa: { type: Number, default: 0 },
-  status: { type: String, enum: ['pendente','concluida','cancelada'], default: 'pendente' },
-  tipoOperacao: { type: String, enum: ['credito','debito'], required: true },
+  status: { 
+    type: String, 
+    enum: ['pendente', 'concluida', 'cancelada'], 
+    default: 'pendente' 
+  },
+  tipoOperacao: { 
+    type: String, 
+    enum: ['credito', 'debito'], 
+    required: true 
+  },
 
   // Parcelamento
   parcelado: { type: Boolean, default: false },
@@ -37,7 +46,10 @@ const TransactionSchema = new mongoose.Schema({
   valorParcela: { type: Number },
   juros: { type: Number, default: 0 },
 
-  // Relações
+  // Integração com Fatura
+  fatura: { type: mongoose.Schema.Types.ObjectId, ref: 'Fatura' },
+
+  // Relações entre transações
   referenciaFatura: { type: mongoose.Schema.Types.ObjectId, ref: 'Transaction' },
   parcelasVinculadas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Transaction' }],
 
@@ -52,33 +64,15 @@ const TransactionSchema = new mongoose.Schema({
   nomeRecebedor: { type: String, default: 'N/A' },
 
   data: { type: Date, default: Date.now }
+
 }, { timestamps: true });
 
 // =========================
 // MÉTODOS ESTÁTICOS
 // =========================
 
-// Gera uma fatura aberta para o usuário (não cria duplicadas)
-TransactionSchema.statics.gerarFatura = async function(usuarioId, mesReferencia) {
-  const faturaExistente = await this.findOne({
-    usuario: usuarioId,
-    tipo: 'fatura_aberta',
-    status: 'pendente'
-  });
-  if (faturaExistente) return faturaExistente;
-
-  return this.create({
-    usuario: usuarioId,
-    tipo: 'fatura_aberta',
-    descricao: `Fatura referente a ${mesReferencia}`,
-    valor: 0,
-    tipoOperacao: 'credito',
-    status: 'pendente'
-  });
-};
-
 // Cria parcelas de uma compra
-TransactionSchema.statics.criarParcelas = async function({ usuarioId, valorTotal, numeroParcelas, descricao }) {
+TransactionSchema.statics.criarParcelas = async function({ usuarioId, valorTotal, numeroParcelas, descricao, faturaId }) {
   const valorParcela = valorTotal / numeroParcelas;
   const parcelas = [];
 
@@ -92,12 +86,13 @@ TransactionSchema.statics.criarParcelas = async function({ usuarioId, valorTotal
       parcelaAtual: i,
       parcelado: true,
       tipoOperacao: 'credito',
-      status: 'pendente'
+      status: 'pendente',
+      fatura: faturaId
     });
     parcelas.push(tx);
   }
 
-  // Vincula as parcelas entre si
+  // Vincula parcelas entre si
   for (const p of parcelas) {
     p.parcelasVinculadas = parcelas.map(pp => pp._id);
     await p.save();
@@ -106,23 +101,43 @@ TransactionSchema.statics.criarParcelas = async function({ usuarioId, valorTotal
   return parcelas;
 };
 
+// Vincula uma transação existente a uma fatura
+TransactionSchema.statics.vincularAFatura = async function(transactionId, faturaId) {
+  const tx = await this.findById(transactionId);
+  if (!tx) throw new Error("Transação não encontrada");
+
+  tx.fatura = faturaId;
+  await tx.save();
+  return tx;
+};
+
 // =========================
 // MÉTODOS DE INSTÂNCIA
 // =========================
 
-// Recalcula o valor de uma fatura aberta com base nas transações vinculadas
-TransactionSchema.methods.recalcularFatura = async function() {
-  if (this.tipo !== 'fatura_aberta') return null;
-
-  const total = await mongoose.model('Transaction').aggregate([
-    { $match: { referenciaFatura: this._id, status: { $ne: 'cancelada' } } },
-    { $group: { _id: null, soma: { $sum: '$valor' } } }
-  ]);
-
-  this.valor = total[0]?.soma || 0;
+// Marca como concluída
+TransactionSchema.methods.concluir = async function() {
+  this.status = 'concluida';
   await this.save();
-  return this.valor;
+  return this;
 };
 
-console.log('Modelo Transaction atualizado ✅');
+// Cancela a transação
+TransactionSchema.methods.cancelar = async function() {
+  this.status = 'cancelada';
+  await this.save();
+  return this;
+};
+
+// Recalcula o valor total de uma fatura com base nas transações vinculadas
+TransactionSchema.statics.recalcularFatura = async function(faturaId) {
+  const total = await this.aggregate([
+    { $match: { fatura: mongoose.Types.ObjectId(faturaId), status: { $ne: 'cancelada' } } },
+    { $group: { _id: null, soma: { $sum: '$valor' } } }
+  ]);
+  return total[0]?.soma || 0;
+};
+
+
+console.log('✅ Modelo Transaction atualizado com integração de faturas sem criar faturas como operação');
 export default mongoose.model('Transaction', TransactionSchema);
