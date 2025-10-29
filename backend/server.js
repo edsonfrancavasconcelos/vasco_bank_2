@@ -1,7 +1,11 @@
 // backend/server.js
+<<<<<<< HEAD
 console.log('[DEBUG] JWT_SECRET do servidor:', process.env.JWT_SECRET);
 import dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
+=======
+import 'dotenv/config';
+>>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
 import express from 'express';
 import mongoose from 'mongoose';
 import path from 'path';
@@ -21,7 +25,11 @@ import './models/Transaction.js';
 import './models/Card.js';
 import './models/Emprestimo.js';
 import './models/PedidoCartao.js';
+<<<<<<< HEAD
 import './models/Fatura.js'; // ✅ Novo modelo de faturas
+=======
+
+>>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
 
 
 // ================================
@@ -33,7 +41,10 @@ import userRoutes from './routes/userRoutes.js';
 import transactionRoutes from './routes/transactionRoutes.js';
 import pixRoutes from './routes/pixRoutes.js';
 import historicoRoutes from './routes/historicoRoutes.js';
+<<<<<<< HEAD
 import faturaRoutes from './routes/faturaRoutes.js';
+=======
+>>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
 
 // ================================
 // 🔹 UTILITÁRIOS
@@ -181,7 +192,10 @@ app.use('/api/emprestimos', emprestimoRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/pix', pixRoutes);
 app.use('/api/historico', historicoRoutes);
+<<<<<<< HEAD
 app.use('/api/fatura', faturaRoutes);
+=======
+>>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
 
 
 
