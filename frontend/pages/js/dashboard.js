@@ -41,37 +41,32 @@ export async function initDashboard() {
     }
 
     // === FUNÇÃO PARA RENDERIZAR FATURA ===
-    function renderFatura(valor, faturaId) {
-      const diaAtual = new Date().getDate();
+    function renderFatura(valor, faturaId, podePagar) {
       faturaEl.dataset.valor = valor;
       faturaEl.dataset.id = faturaId || "";
-      faturaEl.textContent =
-        valor > 0
-          ? diaAtual >= 30
-            ? `Pagar Fatura: ${formatCurrency(valor)}`
-            : `Fatura aberta: ${formatCurrency(valor)}`
-          : `Fatura: ${formatCurrency(0)}`;
-      faturaEl.classList.toggle("pagar-fatura", valor > 0 && diaAtual >= 30);
-      console.log(`[renderFatura] Fatura renderizada: R$ ${valor}, ID: ${faturaId}`);
+
+      faturaEl.textContent = podePagar
+        ? `Pagar Fatura: ${formatCurrency(valor)}`
+        : `Fatura Aberta: ${formatCurrency(valor)}`;
+
+      faturaEl.classList.toggle("pagar-fatura", podePagar);
     }
 
     // === FUNÇÃO PARA ATUALIZAR DASHBOARD E FATURA ===
     async function atualizarDashboardEFatura() {
       try {
-        console.log('[DASHBOARD] Atualizando dashboard e fatura...');
         const [userData, faturaData] = await Promise.all([
           fetchData("/api/user/me"),
           fetchData("/api/fatura/atual")
         ]);
 
         const { nome, numeroConta, saldo = 0 } = userData;
-        const { fatura = 0, id, transacoes = [] } = faturaData;
+        const { fatura = 0, id, transacoes = [], podePagar = false } = faturaData;
 
-        // Atualiza elementos do DOM
         nomeUsuarioEl.textContent = nome || "Usuário";
         numeroContaEl.textContent = numeroConta || "----";
         saldoEl.textContent = formatCurrency(saldo);
-        renderFatura(fatura, id);
+        renderFatura(fatura, id, podePagar);
 
         // Limpa histórico
         listaDebito.innerHTML = "";
@@ -96,7 +91,6 @@ export async function initDashboard() {
           else listaDebito.appendChild(linha);
         });
 
-        console.log(`[DASHBOARD] Atualização concluída: saldo=${saldo}, fatura=${fatura}`);
       } catch (err) {
         console.error('[DASHBOARD] Erro:', err);
         if (err.message.includes("401")) {
@@ -116,11 +110,14 @@ export async function initDashboard() {
     // === CLIQUE NA FATURA (ANTEICIPAÇÃO / PAGAMENTO) ===
     faturaEl.addEventListener("click", async () => {
       const valorFatura = parseFloat(faturaEl.dataset.valor || 0);
-      if (valorFatura <= 0) return abrirModal("Aviso", "<p>Não há fatura para pagar.</p>");
-      const diaAtual = new Date().getDate();
+      const podePagar = faturaEl.classList.contains("pagar-fatura");
 
-      // === ANTECIPAÇÃO (antes do dia 30) ===
-      if (diaAtual < 30) {
+      if (!podePagar && valorFatura <= 0) {
+        return abrirModal("Aviso", "<p>Não há fatura para pagar.</p>");
+      }
+
+      // === ANTECIPAÇÃO (antes do dia de pagamento) ===
+      if (!podePagar) {
         abrirModal("Antecipar Fatura", `
           <div style="color:#fff;">
             <p>Valor total da fatura: <strong>${formatCurrency(valorFatura)}</strong></p>
@@ -137,8 +134,7 @@ export async function initDashboard() {
             <button id="confirmarAntecipacaoBtn" class="btn laranja" style="width:100%;margin-top:10px;">Confirmar Antecipação</button>
           </div>`);
 
-        const confirmarBtn = document.getElementById("confirmarAntecipacaoBtn");
-        confirmarBtn?.addEventListener("click", async () => {
+        document.getElementById("confirmarAntecipacaoBtn")?.addEventListener("click", async () => {
           const valor = parseFloat(document.getElementById("valorAnteciparInput").value);
           const metodoPagamento = document.getElementById("metodoPagamentoSelect").value;
 
@@ -160,7 +156,7 @@ export async function initDashboard() {
         return;
       }
 
-      // === PAGAMENTO (dia 30 ou depois) ===
+      // === PAGAMENTO (dia de vencimento ou depois) ===
       abrirModal("Pagamento de Fatura", `
         <p>Escolha o método para pagar <strong>${formatCurrency(valorFatura)}</strong>:</p>
         <div class="btn-group-modal">
@@ -170,17 +166,20 @@ export async function initDashboard() {
           <button id="opBoleto" class="btn laranja">Boleto</button>
         </div>`);
 
-      document.getElementById("opSaldo")?.addEventListener("click", async () => {
-        try {
-          const res = await fetchData("/api/fatura/pagar", {
-            method: "POST",
-            body: JSON.stringify({ faturaId: faturaEl.dataset.id, valorPagamento: valorFatura, metodoPagamento: "saldo" })
-          });
-          abrirModal("Sucesso", `<p>${res.mensagem || "Pagamento realizado com sucesso!"}</p>`);
-          await atualizarDashboardEFatura();
-        } catch (err) {
-          abrirModal("Erro", `<p>Falha ao pagar fatura: ${err.message}</p>`);
-        }
+      const metodos = ["Saldo", "Pix", "Credito", "Boleto"];
+      metodos.forEach(m => {
+        document.getElementById(`op${m}`)?.addEventListener("click", async () => {
+          try {
+            const res = await fetchData("/api/fatura/pagar", {
+              method: "POST",
+              body: JSON.stringify({ faturaId: faturaEl.dataset.id, valorPagamento: valorFatura, metodoPagamento: m.toLowerCase() })
+            });
+            abrirModal("Sucesso", `<p>${res.mensagem || "Pagamento realizado com sucesso!"}</p>`);
+            await atualizarDashboardEFatura();
+          } catch (err) {
+            abrirModal("Erro", `<p>Falha ao pagar fatura: ${err.message}</p>`);
+          }
+        });
       });
     });
 

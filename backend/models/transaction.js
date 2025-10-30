@@ -20,7 +20,8 @@ const TransactionSchema = new mongoose.Schema({
       'antecipacao',
       'antecipacao_fatura', 
       'juros',
-      'estorno'
+      'estorno',
+      'fatura_aberta',
     ], 
     required: true 
   },

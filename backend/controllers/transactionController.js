@@ -2,8 +2,7 @@ import mongoose from 'mongoose';
 import Transaction from '../models/Transaction.js';
 import Usuario from '../models/Usuario.js';
 
-// =================== FUNÇÃO AUXILIAR ===================
-// Remove faturas pendentes duplicadas
+// =================== AUXILIAR ===================
 async function limparFaturasPendentes(usuarioId) {
   const faturasPendentes = await Transaction.find({
     usuario: usuarioId,
@@ -18,9 +17,24 @@ async function limparFaturasPendentes(usuarioId) {
   }
 }
 
-// =================== ATUALIZA FATURA ABERTA ===================
+// =================== VENCIMENTO ===================
+function calcularDataVencimento() {
+  const hoje = new Date();
+  const ano = hoje.getFullYear();
+  const mes = hoje.getMonth();
+  const diaVencimento = 30;
+  return hoje.getDate() > diaVencimento
+    ? new Date(ano, mes + 1, diaVencimento)
+    : new Date(ano, mes, diaVencimento);
+}
+
+// =================== ATUALIZA FATURA ===================
 export async function atualizarFaturaAberta(usuarioId) {
-  let fatura = await Transaction.findOne({ usuario: usuarioId, tipo: 'fatura_aberta', status: 'pendente' }).sort({ createdAt: -1 });
+  let fatura = await Transaction.findOne({
+    usuario: usuarioId,
+    tipo: 'fatura_aberta',
+    status: 'pendente'
+  }).sort({ createdAt: -1 });
 
   if (!fatura) {
     fatura = await Transaction.create({
@@ -30,24 +44,23 @@ export async function atualizarFaturaAberta(usuarioId) {
       valor: 0,
       tipoOperacao: 'credito',
       status: 'pendente',
+      dataVencimento: calcularDataVencimento()
     });
   }
 
-  // Recalcula fatura somando todas as transações de débito concluídas
-  const transacoes = await Transaction.find({
+  // Soma apenas transações de débito do cartão (não mexe no saldo da conta)
+  const transacoesCartao = await Transaction.find({
     usuario: usuarioId,
     tipoOperacao: 'debito',
     status: 'concluida',
-    $or: [{ tipo: { $ne: 'antecipacao' } }, { tipo: { $ne: 'pagamento_fatura' } }],
+    tipo: { $nin: ['antecipacao', 'pagamento_fatura', 'pagamento_boleto', 'deposito', 'recarga', 'transferencia'] }
   });
 
-  let totalDebito = 0;
-  transacoes.forEach(tx => totalDebito += Number(tx.valor));
-
+  const totalDebito = transacoesCartao.reduce((sum, t) => sum + Number(t.valor), 0);
   fatura.valor = totalDebito;
+  fatura.dataVencimento = calcularDataVencimento();
   await fatura.save();
 
-  // Atualiza usuário
   const usuario = await Usuario.findById(usuarioId);
   usuario.faturaAtual = fatura.valor;
   await usuario.save();
@@ -115,6 +128,23 @@ export async function criarTransacao(req, res) {
         await atualizarFaturaAberta(usuarioDestino._id);
         break;
 
+      case 'credito_cartao':
+        descricaoFinal = descricao || 'Compra no cartão';
+        await Transaction.create({
+          usuario: usuario._id,
+          tipo: 'cartao',
+          valor: valorNum,
+          tipoOperacao: 'debito',
+          descricao: descricaoFinal,
+          status: 'concluida',
+          data: new Date(),
+          nomeRemetente: usuario.nome,
+          nomeRecebedor: operador || 'Comércio',
+          taxa: 0,
+        });
+        await atualizarFaturaAberta(usuario._id);
+        return res.json({ success: true, mensagem: 'Débito no cartão registrado', faturaAtual: usuario.faturaAtual });
+
       default:
         return res.status(400).json({ success: false, error: 'Tipo de transação inválido' });
     }
@@ -138,7 +168,7 @@ export async function criarTransacao(req, res) {
 
     await transacao.save();
 
-    if (tipoOperacao === 'credito') {
+    if (!['pagamento_boleto', 'deposito', 'recarga', 'credito_cartao'].includes(tipo)) {
       await limparFaturasPendentes(usuario._id);
       await atualizarFaturaAberta(usuario._id);
     }
@@ -152,7 +182,6 @@ export async function criarTransacao(req, res) {
       faturaAtual: Number(usuarioAtualizado?.faturaAtual || 0),
       creditoUsado: Number(usuarioAtualizado?.creditoUsado || 0),
     });
-
   } catch (err) {
     console.error('Erro ao criar transação:', err);
     return res.status(500).json({ success: false, error: `Erro ao criar transação: ${err.message}` });
@@ -171,36 +200,7 @@ export const anteciparFatura = async (req, res) => {
     valor = Number(valor);
 
     await limparFaturasPendentes(usuarioId);
-
-    let fatura = await Transaction.findOne({
-      usuario: usuarioId,
-      tipo: 'fatura_aberta',
-      status: 'pendente'
-    }).sort({ createdAt: -1 });
-
-    if (!fatura) {
-      fatura = await Transaction.create({
-        usuario: usuarioId,
-        tipo: 'fatura_aberta',
-        descricao: 'Fatura aberta',
-        valor: 0,
-        tipoOperacao: 'credito',
-        status: 'pendente',
-      });
-    }
-
-    const transacoesDebito = await Transaction.find({
-      usuario: usuarioId,
-      tipoOperacao: 'debito',
-      status: 'concluida',
-      tipo: { $ne: 'antecipacao' }
-    });
-
-    let totalDebito = 0;
-    transacoesDebito.forEach(tx => totalDebito += Number(tx.valor));
-
-    fatura.valor = totalDebito > 0 ? totalDebito : 0;
-    await fatura.save();
+    let fatura = await atualizarFaturaAberta(usuarioId);
 
     const usuario = await Usuario.findById(usuarioId);
 
@@ -330,15 +330,29 @@ export async function listarTransacoesComNomes(req, res) {
 // =================== OBTER FATURA ATUAL ===================
 export async function getFaturaAtual(req, res) {
   try {
-    const usuario = await Usuario.findById(req.user._id).select('faturaAtual limiteCredito creditoUsado');
+    const usuario = await Usuario.findById(req.user._id).select('saldo faturaAtual creditoUsado');
     if (!usuario) return res.status(404).json({ success: false, error: 'Usuário não encontrado' });
+
+    const hoje = new Date();
+    const vencimento = new Date(hoje.getFullYear(), hoje.getMonth(), 30);
+    const faturaAtual = Number(usuario.faturaAtual || 0);
+    const podePagar = hoje.getDate() >= 30;
+    const status = faturaAtual <= 0 ? 'paga' : 'pendente';
 
     return res.json({
       success: true,
-      faturaAtual: Number(usuario.faturaAtual || 0),
-      limiteCredito: Number(usuario.limiteCredito || 0),
-      creditoUsado: Number(usuario.creditoUsado || 0),
+      data: {
+        id: usuario._id,
+        fatura: faturaAtual,
+        status,
+        podePagar,
+        data: hoje,
+        dataVencimento: vencimento,
+        saldo: Number(usuario.saldo || 0),
+        transacoes: [],
+      },
     });
+    
   } catch (err) {
     console.error('Erro ao obter fatura:', err);
     return res.status(500).json({ success: false, error: `Erro ao obter fatura: ${err.message}` });
@@ -359,6 +373,7 @@ export async function listarFaturas(req, res) {
         status: f.status,
         data: f.data,
         descricao: f.descricao,
+        dataVencimento: f.dataVencimento || calcularDataVencimento()
       })),
     });
   } catch (err) {
