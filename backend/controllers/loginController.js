@@ -2,13 +2,9 @@
 import Usuario from '../models/Usuario.js';
 import jwt from 'jsonwebtoken';
 
-<<<<<<< HEAD
 const JWT_SECRET = process.env.JWT_SECRET;
 
 
-=======
-const JWT_SECRET = process.env.JWT_SECRET || 'chave_secreta_segura';
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
 
 // ------------------- Controller -------------------
 export async function login(req, res) {
