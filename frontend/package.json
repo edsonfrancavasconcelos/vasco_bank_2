@@ -20,20 +20,11 @@
     "nanoid": "^3.3.11"
   },
   "devDependencies": {
-<<<<<<< HEAD
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11",
     "vite": "^7.1.3",
     "vitest": "^4.0.1",
     "@vitest/ui": "^4.0.1"
-=======
-    "@vitest/ui": "^4.0.1",
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.11",
-    "vite": "^7.1.12",
-    "vitest": "^4.0.1"
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
   }
 }

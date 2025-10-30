@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 // backend/controllers/userController.js
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
 import 'dotenv/config';
 import jwt from 'jsonwebtoken';
 import Usuario from '../models/Usuario.js';
@@ -10,15 +7,9 @@ import gerarNumeroContaUnico from '../utils/gerarNumeroConta.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'chave_secreta_segura';
 
-<<<<<<< HEAD
-// ============================
-// LOGIN
-// ============================
-=======
 // ============================================================
 // LOGIN
 // ============================================================
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
 export const loginUser = async (req, res) => {
   try {
     const { email, senha } = req.body;
@@ -35,23 +26,14 @@ export const loginUser = async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1d' });
 
-<<<<<<< HEAD
-    console.log('[LOGIN] Usuário logado:', user._id, user.email);
-=======
     console.log(`[LOGIN] Usuário logado: ${user.nome} (${user.email})`);
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
 
     return res.status(200).json({
       token,
       user: {
         id: user._id,
-<<<<<<< HEAD
-        email: user.email,
-        nome: user.nome,
-=======
         nome: user.nome,
         email: user.email,
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
         numeroConta: user.numeroConta,
         saldo: user.saldo || 0,
         faturaAtual: user.faturaAtual || 0,
@@ -59,24 +41,14 @@ export const loginUser = async (req, res) => {
       }
     });
   } catch (error) {
-<<<<<<< HEAD
-    console.error('[LOGIN] Erro inesperado:', error.message, error.stack);
-=======
     console.error('[LOGIN] Erro inesperado:', error);
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
     return res.status(500).json({ message: 'Erro ao fazer login.' });
   }
 };
 
-<<<<<<< HEAD
-// ============================
-// DASHBOARD
-// ============================
-=======
 // ============================================================
 // DASHBOARD
 // ============================================================
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
 export const getDashboard = async (req, res) => {
   try {
     const usuario = await Usuario.findById(req.user.id).select('-senha');
@@ -91,14 +63,6 @@ export const getDashboard = async (req, res) => {
         nome: usuario.nome,
         email: usuario.email,
         numeroConta: usuario.numeroConta,
-<<<<<<< HEAD
-        saldo: usuario.saldo || 0,
-        creditoUsado: usuario.creditoUsado || 0
-      }
-    });
-  } catch (err) {
-    console.error("[DASHBOARD] Erro:", err.message);
-=======
         saldo: Number(usuario.saldo) || 0,
         faturaAtual: Number(usuario.faturaAtual) || 0,
         creditoUsado: Number(usuario.creditoUsado) || 0
@@ -106,20 +70,13 @@ export const getDashboard = async (req, res) => {
     });
   } catch (err) {
     console.error("[DASHBOARD] Erro:", err);
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
     return res.status(500).json({ success: false, error: "Erro ao carregar dashboard." });
   }
 };
 
-<<<<<<< HEAD
-// ============================
-// REGISTRO
-// ============================
-=======
 // ============================================================
 // REGISTRO
 // ============================================================
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
 export const registerUser = async (req, res) => {
   try {
     const { nome, email, cpf, telefone, endereco, senha, saldo } = req.body;
@@ -150,10 +107,7 @@ export const registerUser = async (req, res) => {
       numeroConta,
       saldo: Number(saldo) || 0,
       faturaAtual: 0,
-<<<<<<< HEAD
-=======
       creditoUsado: 0,
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
       historicoFatura: [],
       historicoSaldo: [],
       transacoes: [],
@@ -161,11 +115,7 @@ export const registerUser = async (req, res) => {
 
     await novoUsuario.save();
 
-<<<<<<< HEAD
-    console.log('[REGISTRO] Novo usuário:', novoUsuario._id, novoUsuario.email);
-=======
     console.log(`[REGISTRO] Novo usuário criado: ${novoUsuario.nome} (${novoUsuario.email})`);
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
 
     return res.status(201).json({
       message: 'Usuário registrado com sucesso!',
@@ -173,24 +123,14 @@ export const registerUser = async (req, res) => {
       saldo: novoUsuario.saldo,
     });
   } catch (error) {
-<<<<<<< HEAD
-    console.error('[REGISTRO] Erro inesperado:', error.message, error.stack);
-=======
     console.error('[REGISTRO] Erro inesperado:', error);
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
     return res.status(500).json({ error: 'Erro ao registrar usuário.' });
   }
 };
 
-<<<<<<< HEAD
-// ============================
-// RESET DE SENHA
-// ============================
-=======
 // ============================================================
 // RESET DE SENHA
 // ============================================================
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
 export const resetSenha = async (req, res) => {
   try {
     const { email, novaSenha } = req.body;
@@ -203,32 +143,18 @@ export const resetSenha = async (req, res) => {
     user.senha = novaSenha?.trim() || '123456';
     await user.save();
 
-<<<<<<< HEAD
-    console.log('[RESET] Senha resetada para:', user.email);
-
-    return res.status(200).json({ message: 'Senha resetada com sucesso. Use-a para logar.' });
-  } catch (error) {
-    console.error('[RESET] Erro inesperado:', error.message, error.stack);
-=======
     console.log(`[RESET] Senha resetada para: ${user.email}`);
 
     return res.status(200).json({ message: 'Senha resetada com sucesso. Use-a para logar.' });
   } catch (error) {
     console.error('[RESET] Erro inesperado:', error);
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
     return res.status(500).json({ error: 'Erro interno no servidor.' });
   }
 };
 
-<<<<<<< HEAD
-// ============================
-// HISTÓRICO DE TRANSAÇÕES
-// ============================
-=======
 // ============================================================
 // HISTÓRICO DE TRANSAÇÕES
 // ============================================================
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
 export const getHistorico = async (req, res) => {
   try {
     const userId = req.user?.id;
@@ -267,11 +193,7 @@ export const getHistorico = async (req, res) => {
 
     return res.status(200).json({ success: true, data: historico });
   } catch (err) {
-<<<<<<< HEAD
-    console.error('[HISTÓRICO] Erro ao buscar histórico:', err.message);
-=======
     console.error('[HISTÓRICO] Erro ao buscar histórico:', err);
->>>>>>> 0b4937c6f5fae6624c5562e29774a1f85ba38dfb
     return res.status(500).json({ success: false, error: 'Erro ao carregar histórico.' });
   }
 };
